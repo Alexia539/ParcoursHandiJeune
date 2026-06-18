@@ -1,0 +1,1227 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>Le Parcours RQTH — Jeu de piste</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+@font-face{
+  font-family:'OpenDyslexic';
+  font-style:normal; font-weight:400; font-display:swap;
+  src:url(https://cdn.jsdelivr.net/fontsource/fonts/opendyslexic@latest/latin-400-normal.woff2) format('woff2');
+}
+@font-face{
+  font-family:'OpenDyslexic';
+  font-style:normal; font-weight:700; font-display:swap;
+  src:url(https://cdn.jsdelivr.net/fontsource/fonts/opendyslexic@latest/latin-700-normal.woff2) format('woff2');
+}
+
+/* =====================================================================
+   SYSTÈME DE TOKENS SÉMANTIQUES
+   Chaque rôle (surface, texte, accent...) est défini explicitement pour
+   le thème clair ET le thème sombre, plutôt que dérivé par opacité.
+   Tous les ratios de contraste texte/fond ont été vérifiés ≥ 4.5:1.
+   ===================================================================== */
+:root{
+  /* surfaces */
+  --surface-page:#FFF7EC;
+  --surface-card:#FFFFFF;
+  --surface-muted:#FFEDD6;
+  --surface-border:#E8D2AE;
+
+  /* texte */
+  --text-primary:#2B2440;
+  --text-secondary:#5A5266;     /* contraste ≥ 6.3:1 sur surface-page et surface-card */
+  --text-on-accent:#FFFFFF;
+
+  /* accents — chaque accent a une variante "forte" garantie ≥4.5:1 sur fond clair */
+  --accent-coral:#C23B22;
+  --accent-coral-strong:#9C2E19;
+  --accent-teal:#0E7C6B;
+  --accent-teal-strong:#0A5F51;
+  --accent-violet:#5B3FA0;
+  --accent-violet-strong:#46307D;
+  --accent-sun:#8A6000;
+  --accent-sun-pop:#FFC93C;     /* décoratif uniquement, jamais utilisé comme texte */
+
+  --stamp:#0E7C6B;
+  --focus-ring:#1450C4;
+
+  --font-display:'Fredoka','Nunito',sans-serif;
+  --font-body:'Nunito','Segoe UI',sans-serif;
+  --fs-scale:1;
+  --radius-lg:22px;
+  --radius-md:16px;
+}
+
+html[data-theme="dark"]{
+  --surface-page:#1D1730;
+  --surface-card:#2A2046;
+  --surface-muted:#332862;
+  --surface-border:#4A3C72;
+
+  --text-primary:#F1E9FF;
+  --text-secondary:#C7B9E8;     /* contraste ≥ 7:1 sur surface-page et surface-card en sombre */
+  --text-on-accent:#1D1730;
+
+  --accent-coral:#FF8F73;
+  --accent-coral-strong:#FFB199;
+  --accent-teal:#5FE0C8;
+  --accent-teal-strong:#8CEFDD;
+  --accent-violet:#C7B3FF;
+  --accent-violet-strong:#D9CBFF;
+  --accent-sun:#FFD166;
+  --accent-sun-pop:#FFD166;
+
+  --stamp:#5FE0C8;
+  --focus-ring:#9DC0FF;
+}
+
+html[data-font="verdana"]{ --font-body: Verdana, Geneva, sans-serif; --font-display: Verdana, Geneva, sans-serif; }
+html[data-font="opendyslexic"]{ --font-body: 'OpenDyslexic', Verdana, sans-serif; --font-display: 'OpenDyslexic', Verdana, sans-serif; }
+
+html[data-size="small"]{ --fs-scale: 0.88; }
+html[data-size="medium"]{ --fs-scale: 1; }
+html[data-size="large"]{ --fs-scale: 1.22; }
+html[data-size="xlarge"]{ --fs-scale: 1.45; }
+
+* { box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color: transparent; }
+
+html{ font-size: calc(16px * var(--fs-scale)); }
+
+html,body{
+  background:var(--surface-page);
+  color:var(--text-primary);
+  font-family: var(--font-body);
+  min-height:100vh;
+}
+
+body{
+  background-image:
+    radial-gradient(circle at 14% 6%, color-mix(in srgb, var(--accent-sun-pop) 18%, transparent), transparent 42%),
+    radial-gradient(circle at 88% 14%, color-mix(in srgb, var(--accent-violet) 14%, transparent), transparent 40%),
+    radial-gradient(circle at 80% 92%, color-mix(in srgb, var(--accent-coral) 10%, transparent), transparent 45%);
+  transition: background-color 0.2s, color 0.2s;
+}
+
+h1,h2,h3{ font-family: var(--font-display); font-weight:700; letter-spacing:0.01em; }
+
+.label{
+  font-family:'Nunito',sans-serif; text-transform:uppercase; font-weight:800;
+  letter-spacing:0.1em; font-size:0.78em; color:var(--accent-teal-strong);
+}
+
+a{ color:inherit; }
+
+/* ---------- FOCUS VISIBLE (WCAG 2.4.7) ---------- */
+:focus{ outline:none; }
+:focus-visible{
+  outline: 3px solid var(--focus-ring);
+  outline-offset: 2px;
+  border-radius: 6px;
+}
+
+.skip-link{
+  position:absolute; left:-9999px; top:0; background:var(--focus-ring); color:#fff;
+  padding:0.6rem 1rem; z-index:200; border-radius:0 0 8px 0;
+}
+.skip-link:focus{ left:0; }
+
+/* ---------- SHELL ---------- */
+#app{ min-height:100vh; display:flex; flex-direction:column; }
+
+.topbar{
+  display:flex; align-items:center; justify-content:space-between; gap:0.6rem;
+  padding:0.8rem 1.1rem; border-bottom:3px solid var(--surface-border);
+  background:var(--surface-page); position:sticky; top:0; z-index:50;
+  flex-wrap:wrap;
+}
+.topbar-left{ display:flex; align-items:center; gap:0.7rem; flex-wrap:wrap; }
+.brand{ display:flex; align-items:center; gap:0.65rem; }
+.brand .mark{
+  width:38px; height:38px; border-radius:14px; background:var(--accent-coral);
+  display:flex; align-items:center; justify-content:center;
+  font-family:var(--font-display); font-weight:700; font-size:1rem;
+  color:var(--text-on-accent); transform:rotate(-8deg); flex-shrink:0;
+  box-shadow: 3px 3px 0 color-mix(in srgb, var(--accent-coral) 60%, black);
+}
+.brand .name{ font-size:1.08em; font-weight:700; font-family:var(--font-display); }
+.brand .sub{ font-size:0.7em; color:var(--accent-teal-strong); font-weight:800; letter-spacing:0.06em; }
+
+.back-btn{
+  display:none; align-items:center; gap:0.35rem;
+  border:2px solid var(--surface-border); background:var(--surface-card); color:var(--text-primary);
+  font-weight:700; font-size:0.85em; letter-spacing:0.02em;
+  padding:0.45rem 0.85rem; border-radius:20px; cursor:pointer;
+  transition: transform 0.15s, border-color 0.15s, color 0.15s;
+}
+.back-btn.show{ display:inline-flex; }
+.back-btn:hover{ border-color:var(--accent-coral); color:var(--accent-coral); transform: translateX(-2px); }
+
+.topbar-right{ display:flex; align-items:center; gap:0.4rem; flex-wrap:wrap; }
+
+.mode-switch{ display:flex; gap:0.4rem; background:var(--surface-muted); border-radius:20px; padding:0.25rem; }
+.mode-switch button{
+  border:none; background:transparent; color:var(--text-primary);
+  font-weight:800; font-size:0.78em; letter-spacing:0.03em;
+  padding:0.4rem 0.8rem; border-radius:16px; cursor:pointer; text-transform:uppercase;
+  transition: background 0.15s, color 0.15s;
+}
+.mode-switch button[aria-pressed="true"]{ background:var(--accent-teal); color:var(--text-on-accent); }
+
+.icon-btn{
+  border:2px solid var(--surface-border); background:var(--surface-card); color:var(--text-primary);
+  width:40px; height:40px; border-radius:50%; cursor:pointer; font-size:1.1rem;
+  display:flex; align-items:center; justify-content:center;
+  transition: transform 0.2s, background 0.15s, color 0.15s;
+}
+.icon-btn[aria-pressed="true"]{ background:var(--accent-violet); color:var(--text-on-accent); border-color:var(--accent-violet); }
+.icon-btn:hover{ transform: rotate(15deg); }
+
+main{ flex:1; max-width:760px; width:100%; margin:0 auto; padding:1.1rem 1rem 3rem; }
+
+/* ---------- PRÉFÉRENCES PANEL — hiérarchie renforcée ---------- */
+.prefs-panel{
+  display:none; background:var(--surface-card); border:3px solid var(--surface-border); border-radius:var(--radius-lg);
+  padding:1.4rem; margin: 0.8rem auto 0; max-width:760px;
+}
+.prefs-panel.open{ display:block; animation: popIn 0.25s ease; }
+@keyframes popIn{ from{opacity:0; transform:scale(0.97) translateY(-4px);} to{opacity:1; transform:scale(1) translateY(0);} }
+
+.prefs-row{ padding-bottom:1.3rem; margin-bottom:1.3rem; border-bottom:2px dashed var(--surface-border); }
+.prefs-row:last-of-type{ border-bottom:none; margin-bottom:0; padding-bottom:0; }
+
+.prefs-row .label{ display:flex; align-items:center; gap:0.4rem; margin-bottom:0.7rem; }
+.prefs-row .label .pref-icon{ font-size:1.1em; }
+.prefs-options{ display:flex; gap:0.5rem; flex-wrap:wrap; }
+.prefs-options button{
+  border:2px solid var(--surface-border); background:var(--surface-muted); color:var(--text-primary);
+  padding:0.55rem 1rem; border-radius:14px; cursor:pointer; font-family:inherit; font-size:0.92em; font-weight:700;
+  transition: transform 0.15s, border-color 0.15s, background 0.15s, color 0.15s;
+}
+.prefs-options button[aria-pressed="true"]{ border-color:var(--accent-teal); background:var(--accent-teal); color:var(--text-on-accent); }
+.prefs-options button:hover{ transform: translateY(-1px); }
+
+.prefs-close{
+  margin-top:1.4rem; width:auto; display:block; margin-left:auto;
+  background:transparent; color:var(--text-secondary); border:1.5px solid var(--surface-border);
+  padding:0.5rem 1.1rem; border-radius:12px; font-family:inherit; font-weight:700; cursor:pointer; font-size:0.85em;
+}
+.prefs-close:hover{ color:var(--text-primary); border-color:var(--text-secondary); }
+
+/* ---------- PROGRESS MAP ---------- */
+.chapter-bar{
+  display:flex; gap:0.4rem; overflow-x:auto; padding-bottom:0.6rem; margin-bottom:1rem;
+  scrollbar-width:thin;
+}
+.chapter-chip{
+  flex-shrink:0; font-weight:800; font-size:0.72em; letter-spacing:0.02em;
+  padding:0.4rem 0.75rem; border-radius:20px; border:2px solid var(--surface-border); color:var(--text-secondary);
+  white-space:nowrap; background:var(--surface-card);
+}
+.chapter-chip.current{ border-color:var(--accent-coral); color:var(--accent-coral); }
+.chapter-chip.done{ border-color:var(--stamp); color:var(--stamp); background: color-mix(in srgb, var(--stamp) 12%, var(--surface-card)); }
+
+/* ---------- BARRE DE PROGRESSION GLOBALE (gamification) ---------- */
+.global-progress{
+  display:flex; align-items:center; gap:0.7rem; margin-bottom:1.1rem;
+  background:var(--surface-card); border:2.5px solid var(--surface-border); border-radius:18px;
+  padding:0.6rem 1rem;
+}
+.global-progress .gp-track{
+  flex:1; height:12px; border-radius:8px; background:var(--surface-muted); overflow:hidden; position:relative;
+}
+.global-progress .gp-fill{
+  height:100%; border-radius:8px; background: linear-gradient(90deg, var(--accent-teal), var(--accent-coral));
+  transition: width 0.5s ease;
+}
+.global-progress .gp-label{ font-weight:800; font-size:0.82em; white-space:nowrap; }
+.global-progress .gp-badge{
+  font-size:0.78em; font-weight:800; background:var(--surface-muted); padding:0.25rem 0.6rem; border-radius:10px;
+  white-space:nowrap;
+}
+
+.route-strip{
+  display:grid; grid-template-columns:repeat(12,1fr); gap:5px;
+  margin:0 0 1.4rem;
+}
+.route-node{ height:9px; border-radius:6px; background:var(--surface-border); transition: background 0.3s; }
+.route-node.current{ background:var(--accent-coral); }
+.route-node.done{ background:var(--stamp); }
+
+/* ---------- CARDS ---------- */
+.sheet{
+  background:var(--surface-card); border:3px solid var(--surface-border); border-radius:var(--radius-lg); padding:1.6rem;
+  position:relative; box-shadow:5px 6px 0 var(--surface-border);
+}
+.sheet + .sheet{ margin-top:1.2rem; }
+
+.station-eyebrow{ display:flex; justify-content:space-between; align-items:baseline; margin-bottom:0.7rem; flex-wrap:wrap; gap:0.4rem; }
+.station-num{ font-family:var(--font-display); color:var(--accent-coral); font-weight:700; font-size:0.95em; }
+.station-title{ font-size:1.55em; line-height:1.2; margin-bottom:0.35rem; }
+.station-flavor{ color:var(--text-secondary); font-size:0.95em; margin-bottom:1.1rem; font-weight:600; }
+
+.format-tag{
+  font-weight:800; font-size:0.7em; letter-spacing:0.03em;
+  padding:0.25rem 0.65rem; border-radius:12px; text-transform:uppercase;
+}
+.format-tag.qcm{ background: color-mix(in srgb, var(--accent-teal) 20%, var(--surface-card)); color:var(--accent-teal-strong); }
+.format-tag.vf{ background: color-mix(in srgb, var(--accent-coral) 18%, var(--surface-card)); color:var(--accent-coral-strong); }
+.format-tag.situation{ background: color-mix(in srgb, var(--accent-violet) 18%, var(--surface-card)); color:var(--accent-violet-strong); }
+.format-tag.debat{ background: color-mix(in srgb, var(--accent-sun-pop) 32%, var(--surface-card)); color:var(--accent-sun); }
+
+.q-progress{ font-weight:700; font-size:0.85em; color:var(--text-secondary); margin-bottom:0.8rem; }
+
+.q-head{ display:flex; align-items:flex-start; gap:0.6rem; }
+.q-text{ font-size:1.12em; font-weight:700; margin-bottom:1.15rem; line-height:1.5; flex:1; }
+.q-situation{
+  background:var(--surface-muted); border-left:4px solid var(--accent-violet); padding:0.85rem 1.05rem;
+  font-size:1em; font-weight:600; margin-bottom:1.05rem; border-radius:0 var(--radius-md) var(--radius-md) 0; flex:1;
+}
+
+.speak-btn{
+  flex-shrink:0; border:2px solid var(--surface-border); background:var(--surface-muted); color:var(--accent-teal-strong);
+  width:38px; height:38px; border-radius:50%; cursor:pointer; font-size:1em;
+  display:flex; align-items:center; justify-content:center;
+}
+.speak-btn.speaking{ background:var(--accent-coral); color:var(--text-on-accent); border-color:var(--accent-coral); animation: pulse 0.8s infinite; }
+@keyframes pulse{ 0%,100%{ transform:scale(1); } 50%{ transform:scale(1.12); } }
+
+.options{ display:flex; flex-direction:column; gap:0.65rem; }
+.opt-btn{
+  text-align:left; background:var(--surface-muted); border:2.5px solid var(--surface-border); border-radius:var(--radius-md);
+  padding:0.9rem 1.1rem; font-size:1.02em; cursor:pointer; font-family:inherit; font-weight:600; color:var(--text-primary);
+  transition: background 0.15s, border-color 0.15s, transform 0.12s;
+}
+.opt-btn:hover{ border-color:var(--accent-teal); transform: translateX(3px) scale(1.01); }
+.opt-btn:active{ transform: scale(0.98); }
+.opt-btn.correct{ background:var(--stamp); color:var(--text-on-accent); border-color:var(--stamp); animation: bounce 0.4s ease; }
+.opt-btn.wrong{ background:var(--accent-coral); color:var(--text-on-accent); border-color:var(--accent-coral); animation: shake 0.35s ease; }
+.opt-btn:disabled{ cursor:default; }
+@keyframes bounce{ 0%{transform:scale(1);} 40%{transform:scale(1.04);} 100%{transform:scale(1);} }
+@keyframes shake{ 0%,100%{transform:translateX(0);} 25%{transform:translateX(-4px);} 75%{transform:translateX(4px);} }
+
+.vf-row{ display:grid; grid-template-columns:1fr 1fr; gap:0.7rem; }
+.vf-row .opt-btn{ text-align:center; font-weight:800; }
+
+.debate-prompt{
+  background:var(--surface-muted); border-left:4px solid var(--accent-sun-pop); padding:0.95rem 1.05rem; border-radius:0 var(--radius-md) var(--radius-md) 0;
+  font-size:1em; margin-bottom:1.05rem; font-weight:600;
+}
+.debate-btn{
+  width:100%; background:var(--accent-violet); color:var(--text-on-accent); border:none; padding:0.9rem; border-radius:var(--radius-md);
+  font-family:var(--font-display); font-weight:700; cursor:pointer; font-size:1.02em;
+  transition: background 0.15s;
+}
+.debate-btn:hover{ background:var(--accent-violet-strong); }
+
+.feedback{
+  margin-top:1.15rem; padding:1.05rem 1.15rem; border-radius:var(--radius-md); font-size:1em; line-height:1.55; display:none;
+  font-weight:600;
+}
+.feedback.show{ display:block; animation:rise 0.35s ease; }
+.feedback.good{ background: color-mix(in srgb, var(--stamp) 16%, var(--surface-muted)); border-left:5px solid var(--stamp); }
+.feedback.bad{ background: color-mix(in srgb, var(--accent-coral) 14%, var(--surface-muted)); border-left:5px solid var(--accent-coral); }
+.feedback.neutral{ background: color-mix(in srgb, var(--accent-violet) 14%, var(--surface-muted)); border-left:5px solid var(--accent-violet); }
+@keyframes rise{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
+@media (prefers-reduced-motion: reduce){ .feedback.show, .opt-btn.correct, .opt-btn.wrong, .speak-btn.speaking{ animation:none !important; } }
+
+.right-info{ margin-top:0.9rem; padding-top:0.9rem; border-top:2px dashed var(--surface-border); font-size:0.92em; font-weight:400; }
+.right-info strong{ color:var(--accent-teal-strong); }
+
+.step-nav{ display:flex; gap:0.6rem; margin-top:1.2rem; }
+.next-btn{
+  flex:1; background:var(--accent-coral); color:var(--text-on-accent); border:none;
+  padding:0.95rem; border-radius:var(--radius-md); font-size:1.05em; font-weight:700; font-family:var(--font-display);
+  cursor:pointer; display:none; transition: background 0.15s, transform 0.15s;
+}
+.next-btn.show{ display:block; }
+.next-btn:hover{ background:var(--accent-coral-strong); transform: translateY(-1px); }
+.prev-step-btn{
+  display:none; background:var(--surface-muted); color:var(--text-primary); border:2.5px solid var(--surface-border);
+  padding:0.95rem 1.1rem; border-radius:var(--radius-md); font-size:0.96em; font-weight:700; font-family:inherit; cursor:pointer;
+  transition: border-color 0.15s, color 0.15s;
+}
+.prev-step-btn.show{ display:block; }
+.prev-step-btn:hover{ border-color:var(--accent-teal); color:var(--accent-teal-strong); }
+
+.stamp-mark{
+  position:absolute; top:1.1rem; right:1.2rem; width:62px; height:62px; border:4px solid var(--stamp);
+  border-radius:50%; color:var(--stamp); display:none; align-items:center; justify-content:center;
+  transform:rotate(-14deg); font-family:var(--font-display); font-size:0.58em; font-weight:700;
+  text-align:center; line-height:1.1;
+}
+.stamp-mark.show{ display:flex; animation: stampIn 0.4s ease; }
+@keyframes stampIn{ from{ transform: rotate(-14deg) scale(1.8); opacity:0; } to{ transform: rotate(-14deg) scale(1); opacity:1; } }
+
+/* ---------- ENTRY ---------- */
+.entry-wrap{ text-align:center; padding:1.9rem 0 1rem; }
+.entry-wrap .kicker{ font-weight:800; letter-spacing:0.12em; color:var(--accent-teal-strong); font-size:0.82em; margin-bottom:0.6rem; }
+.entry-wrap h1{ font-size:2em; line-height:1.18; margin-bottom:0.8rem; }
+.entry-wrap h1 .accent{ color:var(--accent-coral); }
+.entry-wrap p.lede{ color:var(--text-secondary); max-width:480px; margin:0 auto 1.5rem; font-size:1.02em; font-weight:600; }
+
+.chapter-grid{ display:flex; flex-direction:column; gap:0.9rem; margin-top:1rem; text-align:left; }
+
+/* chaque carte porte une bande colorée à gauche + un fond très légèrement teinté
+   pour gagner du poids visuel propre, distinct des autres cartes du parcours */
+.chapter-card{
+  position:relative; overflow:hidden;
+  background:var(--surface-card); border:3px solid var(--surface-border); border-radius:var(--radius-lg);
+  padding:1.1rem 1.25rem 1.1rem 1.5rem;
+  display:flex; align-items:center; gap:1rem; cursor:pointer; width:100%; font-family:inherit; color:var(--text-primary);
+  box-shadow: 4px 4px 0 var(--surface-border);
+  transition: transform 0.15s, box-shadow 0.15s;
+}
+.chapter-card::before{
+  content:""; position:absolute; left:0; top:0; bottom:0; width:8px;
+  background: var(--chapter-color, var(--accent-coral));
+}
+.chapter-card{ background-image: linear-gradient(90deg, color-mix(in srgb, var(--chapter-color, var(--accent-coral)) 7%, var(--surface-card)), var(--surface-card) 60%); }
+.chapter-card:hover{ transform: translate(-2px,-3px); box-shadow: 6px 8px 0 var(--chapter-color, var(--accent-coral)); }
+
+.chapter-card:nth-child(1){ --chapter-color: var(--accent-coral); }
+.chapter-card:nth-child(2){ --chapter-color: var(--accent-violet); }
+.chapter-card:nth-child(3){ --chapter-color: var(--accent-teal); }
+.chapter-card:nth-child(4){ --chapter-color: var(--accent-sun); }
+.chapter-card:nth-child(5){ --chapter-color: var(--accent-coral-strong); }
+.chapter-card:nth-child(6){ --chapter-color: var(--accent-violet-strong); }
+
+.chapter-card .cnum{
+  font-family:var(--font-display); font-weight:700; color:var(--text-on-accent); font-size:1.1em; flex-shrink:0; width:38px; height:38px;
+  border-radius:12px; display:flex; align-items:center; justify-content:center; transform: rotate(-4deg);
+  background: var(--chapter-color, var(--accent-coral));
+  transition: transform 0.2s;
+}
+.chapter-card:hover .cnum{ transform: rotate(4deg) scale(1.08); }
+.chapter-card .ctxt{ text-align:left; flex:1; }
+.chapter-card .ctxt strong{ display:block; font-size:1.04em; font-family:var(--font-display); }
+.chapter-card .ctxt span{ font-size:0.85em; color:var(--text-secondary); font-weight:600; }
+.chapter-card .ccount{ font-weight:800; font-size:0.8em; color:var(--text-secondary); flex-shrink:0; text-align:right; }
+.chapter-card .ccount .ccheck{ display:block; font-size:1.1em; color:var(--stamp); margin-top:0.15rem; }
+
+.entry-hint{ font-size:0.85em; color:var(--text-secondary); margin-top:1.3rem; font-weight:600; }
+
+/* ---------- FINAL ---------- */
+.passport{ background:var(--surface-card); border:3px solid var(--surface-border); }
+.passport h2{ font-size:1.65em; margin-bottom:0.4rem; }
+.passport .score-line{ font-weight:800; color:var(--accent-teal-strong); margin-bottom:1.3rem; font-size:0.95em; }
+.rights-list{ display:flex; flex-direction:column; gap:0.9rem; margin:1.1rem 0; }
+.right-item{ display:flex; gap:0.85rem; align-items:flex-start; padding:1rem; background:var(--surface-muted); border-radius:var(--radius-md); }
+.right-item .ico{ width:30px; flex-shrink:0; text-align:center; font-size:1.3em; padding-top:0.1rem; }
+.right-item .txt strong{ display:block; margin-bottom:0.15rem; font-family:var(--font-display); }
+.right-item .txt span{ font-size:0.88em; color:var(--text-secondary); font-weight:600; }
+
+.resource-box{ background:var(--accent-teal); color:var(--text-on-accent); border-radius:var(--radius-lg); padding:1.4rem; text-align:center; margin-top:1.4rem; }
+.resource-box h3{ color:inherit; margin-bottom:0.4rem; }
+.resource-box p{ font-size:0.9em; opacity:0.92; margin-bottom:1rem; font-weight:600; }
+.qr-block{
+  width:132px; height:132px; margin:0 auto 0.8rem;
+  background: repeating-conic-gradient(#fff 0% 25%, transparent 0% 50%) 50% / 16px 16px, #fff;
+  border-radius:14px; position:relative; overflow:hidden;
+}
+.qr-block::after{
+  content:""; position:absolute; inset:13px; background:var(--accent-teal);
+  mask-image: radial-gradient(circle, transparent 30%, black 31%); opacity:0.18;
+}
+.qr-note{ font-size:0.72em; letter-spacing:0.04em; opacity:0.85; font-weight:700; }
+
+.restart-btn{
+  margin-top:1.4rem; width:100%; background:transparent; border:3px solid var(--accent-teal); color:var(--accent-teal-strong);
+  padding:0.85rem; border-radius:var(--radius-md); font-family:var(--font-display); font-weight:700; cursor:pointer; font-size:1em;
+  transition: background 0.15s, color 0.15s;
+}
+.restart-btn:hover{ background:var(--accent-teal); color:var(--text-on-accent); }
+
+/* ---------- FACILITATOR ---------- */
+.fac-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.2rem; gap:1rem; flex-wrap:wrap; }
+.fac-header h1{ font-size:1.55em; }
+.fac-header p{ color:var(--text-secondary); font-size:0.9em; max-width:420px; font-weight:600; }
+
+.timer-box{ background:var(--accent-violet); color:var(--text-on-accent); border-radius:var(--radius-lg); padding:1rem 1.3rem; text-align:center; min-width:150px; }
+.timer-box .t-label{ font-weight:800; font-size:0.66em; letter-spacing:0.1em; opacity:0.85; margin-bottom:0.3rem; }
+.timer-box .t-val{ font-size:1.75em; font-weight:700; font-family:var(--font-display); }
+.timer-box .t-controls{ display:flex; gap:0.4rem; justify-content:center; margin-top:0.6rem; }
+.timer-box button{
+  background:rgba(255,255,255,0.22); border:1px solid rgba(255,255,255,0.35); color:inherit;
+  border-radius:8px; padding:0.32rem 0.65rem; font-size:0.76em; font-weight:700; cursor:pointer; font-family:inherit;
+}
+
+.agenda{ display:flex; flex-direction:column; gap:0.7rem; margin-bottom:1.6rem; }
+.agenda-item{
+  display:grid; grid-template-columns:74px 1fr; gap:0.9rem; background:var(--surface-card); border:2.5px solid var(--surface-border);
+  border-radius:var(--radius-md); padding:0.9rem 1rem; cursor:pointer; width:100%; text-align:left; font-family:inherit; color:var(--text-primary);
+  transition: border-color 0.15s, box-shadow 0.15s;
+}
+.agenda-item[aria-pressed="true"]{ border-color:var(--accent-coral); box-shadow:3px 3px 0 var(--accent-coral); }
+.agenda-time{ font-weight:800; color:var(--accent-teal-strong); font-size:0.82em; align-self:center; }
+.agenda-body strong{ display:block; font-size:0.98em; margin-bottom:0.15rem; font-family:var(--font-display); }
+.agenda-body p{ font-size:0.85em; color:var(--text-secondary); font-weight:600; }
+
+.qr-grid{ display:grid; grid-template-columns:repeat(3,1fr); gap:0.9rem; margin-top:1rem; }
+@media(max-width:560px){ .qr-grid{ grid-template-columns:repeat(2,1fr); } }
+.qr-card-mini{ background:var(--surface-card); border:2.5px solid var(--surface-border); border-radius:var(--radius-md); padding:0.9rem; text-align:center; }
+.qr-card-mini .qr-block{ width:68px; height:68px; margin-bottom:0.5rem; border-radius:10px; }
+.qr-card-mini strong{ font-size:0.78em; display:block; margin-bottom:0.15rem; }
+.qr-card-mini span{ font-size:0.68em; color:var(--accent-teal-strong); font-weight:700; }
+
+.printable-note{
+  background:var(--surface-muted); border:2px dashed var(--accent-sun-pop); border-radius:var(--radius-md); padding:0.95rem 1.15rem;
+  font-size:0.85em; color:var(--text-secondary); margin-top:1.2rem; font-weight:600;
+}
+
+footer{ text-align:center; padding:1.3rem; font-size:0.78em; color:var(--text-secondary); font-weight:700; }
+
+/* ---------- RESPONSIVE ---------- */
+@media (max-width:600px){
+  .brand .sub{ display:none; }
+  .entry-wrap h1{ font-size:1.6em; }
+  .station-title{ font-size:1.3em; }
+  .vf-row{ grid-template-columns:1fr; }
+  .fac-header{ flex-direction:column; }
+  .timer-box{ width:100%; }
+  .qr-grid{ grid-template-columns:repeat(2,1fr); }
+  .step-nav{ flex-direction:column; }
+  .global-progress{ flex-wrap:wrap; }
+}
+@media (max-width:380px){
+  main{ padding:0.9rem 0.7rem 2.5rem; }
+  .sheet{ padding:1.15rem; }
+  .topbar{ padding:0.7rem 0.7rem; }
+}
+
+@media (forced-colors: active){
+  .opt-btn, .sheet, .chapter-card, .agenda-item{ border:1px solid CanvasText; }
+}
+</style>
+</head>
+<body>
+<a href="#main" class="skip-link">Aller au contenu principal</a>
+<div id="app">
+
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="back-btn" id="back-btn" onclick="goBack()" aria-label="Revenir à l'écran précédent">← Retour</button>
+      <div class="brand">
+        <div class="mark" aria-hidden="true">RQ</div>
+        <div>
+          <div class="name">Le Parcours RQTH</div>
+          <div class="sub">JEU DE PISTE · DROITS DES JEUNES</div>
+        </div>
+      </div>
+    </div>
+    <div class="topbar-right">
+      <div class="mode-switch" role="group" aria-label="Choisir le mode d'affichage">
+        <button id="btn-mode-player" aria-pressed="true" onclick="setMode('player')">Joueur</button>
+        <button id="btn-mode-facilitator" aria-pressed="false" onclick="setMode('facilitator')">Animateur</button>
+      </div>
+      <button class="icon-btn" id="prefs-toggle" onclick="togglePrefs()" aria-label="Ouvrir les préférences d'affichage" aria-expanded="false" aria-controls="prefs-panel">⚙</button>
+    </div>
+  </div>
+
+  <div class="prefs-panel" id="prefs-panel" role="region" aria-label="Préférences d'affichage">
+    <div class="prefs-row">
+      <span class="label" id="font-label"><span class="pref-icon">🔤</span> Police de lecture</span>
+      <div class="prefs-options" role="group" aria-labelledby="font-label">
+        <button data-font="default" aria-pressed="true" onclick="setFont('default')">Standard</button>
+        <button data-font="verdana" aria-pressed="false" onclick="setFont('verdana')">Verdana</button>
+        <button data-font="opendyslexic" aria-pressed="false" onclick="setFont('opendyslexic')">OpenDyslexic</button>
+      </div>
+    </div>
+    <div class="prefs-row">
+      <span class="label" id="size-label"><span class="pref-icon">🔍</span> Taille du texte</span>
+      <div class="prefs-options" role="group" aria-labelledby="size-label">
+        <button data-size="small" aria-pressed="false" onclick="setSize('small')">A−</button>
+        <button data-size="medium" aria-pressed="true" onclick="setSize('medium')">A</button>
+        <button data-size="large" aria-pressed="false" onclick="setSize('large')">A+</button>
+        <button data-size="xlarge" aria-pressed="false" onclick="setSize('xlarge')">A++</button>
+      </div>
+    </div>
+    <div class="prefs-row">
+      <span class="label" id="theme-label"><span class="pref-icon">🌗</span> Thème</span>
+      <div class="prefs-options" role="group" aria-labelledby="theme-label">
+        <button data-theme="light" aria-pressed="true" onclick="setTheme('light')">☀ Clair</button>
+        <button data-theme="dark" aria-pressed="false" onclick="setTheme('dark')">● Sombre</button>
+      </div>
+    </div>
+    <div class="prefs-row">
+      <span class="label" id="voice-label"><span class="pref-icon">🔊</span> Lecture vocale</span>
+      <div class="prefs-options" role="group" aria-labelledby="voice-label">
+        <button data-voice="off" aria-pressed="true" onclick="setVoicePref(false)">Désactivée</button>
+        <button data-voice="on" aria-pressed="false" onclick="setVoicePref(true)">Activée</button>
+      </div>
+    </div>
+    <button class="prefs-close" onclick="togglePrefs()">Fermer</button>
+  </div>
+
+  <main id="main"></main>
+
+  <footer>Parcours conçu pour un atelier de sensibilisation d'1h · 12 stations · à imprimer, scanner, transmettre</footer>
+</div>
+
+<script>
+/* ===================== DONNÉES ===================== */
+
+const chapters = [
+  { id:"comprendre", title:"Comprendre le handicap", stationRange:[0,2] },
+  { id:"sante", title:"Santé mentale & quotidien", stationRange:[3,4] },
+  { id:"etudes", title:"Études", stationRange:[5,6] },
+  { id:"aides", title:"Aides financières", stationRange:[7,8] },
+  { id:"travail", title:"Monde du travail", stationRange:[9,10] },
+  { id:"demarche", title:"Faire sa demande", stationRange:[11,11] }
+];
+
+const stations = [
+  {
+    num:1, chapter:"comprendre", title:"Le point de départ", flavor:"Devant l'affiche d'accueil de l'atelier.",
+    categorie:"Idées reçues",
+    questions:[
+      { format:"qcm", question:"Quel pourcentage des handicaps sont invisibles (troubles psychiques, maladies chroniques, dyslexie, dépression...) ?",
+        options:["Environ 20 %","Environ 50 %","Environ 80 %"], correct:2,
+        explication:"80 % des handicaps ne se voient pas au premier coup d'œil.",
+        droit:"Tu n'as jamais besoin de \"prouver\" visuellement un handicap pour avoir des droits : ce qui compte, c'est l'impact sur ta vie quotidienne." },
+      { format:"vf", question:"Vrai ou faux : on ne peut avoir la RQTH que si on est en fauteuil roulant ou si le handicap se voit.",
+        options:["Vrai","Faux"], correct:1,
+        explication:"Faux. La très grande majorité des personnes RQTH n'ont aucun signe visible de handicap.",
+        droit:"Le handicap reconnu administrativement n'a aucun lien avec son apparence visible." }
+    ]
+  },
+  {
+    num:2, chapter:"comprendre", title:"Le panneau des définitions", flavor:"Un panneau avec plusieurs mots affichés au mur.",
+    categorie:"Définir le handicap",
+    questions:[
+      { format:"qcm", question:"Selon la loi française, qu'est-ce qui définit un handicap ?",
+        options:["Une maladie diagnostiquée par un médecin uniquement","Une limitation d'activité ou de participation à la vie sociale due à une altération durable", "Une carte délivrée à la naissance"], correct:1,
+        explication:"Le handicap se définit par son impact sur la participation sociale, pas par un diagnostic en soi.",
+        droit:"Deux personnes avec le même diagnostic peuvent avoir des besoins de reconnaissance très différents selon l'impact réel sur leur vie." },
+      { format:"situation", question:"Lina a un trouble dys qui la fatigue énormément à la lecture, mais elle compense bien et a de bonnes notes. Peut-elle tout de même envisager une RQTH ou des aménagements ?",
+        options:["Non, ses bonnes notes prouvent qu'elle n'a pas besoin d'aide","Oui, la fatigue et l'effort supplémentaire comptent, même avec de bons résultats"], correct:1,
+        explication:"La compensation a un coût (fatigue, temps, énergie) qui justifie un aménagement même si les résultats sont là.",
+        droit:"\"Réussir malgré tout\" n'enlève rien au droit d'être accompagné·e : la RQTH reconnaît l'effort caché, pas seulement l'échec visible." }
+    ]
+  },
+  {
+    num:3, chapter:"comprendre", title:"Le coin des âges", flavor:"Une frise chronologique punaisée au mur.",
+    categorie:"Qui peut demander",
+    questions:[
+      { format:"qcm", question:"À partir de quel âge peut-on déposer une demande de RQTH ?",
+        options:["18 ans","16 ans","Il n'y a pas d'âge minimum, c'est possible dès la majorité légale de raisonnement"], correct:1,
+        explication:"La demande de RQTH est possible dès 16 ans, en lien avec l'entrée progressive dans la vie professionnelle ou les études supérieures.",
+        droit:"Tu peux anticiper la démarche avant même d'avoir besoin de l'activer concrètement." },
+      { format:"debat", question:"Certain·es jeunes pensent que \"demander la RQTH trop tôt, c'est s'enfermer dans une étiquette pour la vie\". Qu'en pensez-vous en équipe ?",
+        prompt:"Discutez 2 minutes en équipe : qu'est-ce qui vous semble vrai ou faux dans cette affirmation ?",
+        explication:"La RQTH est attribuée pour une durée limitée (en général 1 à 10 ans), renouvelable ou non. Ce n'est pas une étiquette permanente, mais un statut administratif réversible.",
+        droit:"Tu gardes le contrôle : tu peux ne pas renouveler, ne jamais l'utiliser auprès d'un employeur, ou l'activer seulement quand tu en as besoin." }
+    ]
+  },
+  {
+    num:4, chapter:"sante", title:"Le couloir de la santé mentale", flavor:"Grande cause nationale de l'année : on s'arrête ici.",
+    categorie:"Santé mentale et RQTH",
+    questions:[
+      { format:"qcm", question:"Une dépression sévère ou des troubles anxieux durables peuvent-ils ouvrir droit à la RQTH ?",
+        options:["Non, la RQTH ne concerne que le handicap physique","Oui, s'ils impactent durablement la vie professionnelle ou les études"], correct:1,
+        explication:"La santé mentale fait partie intégrante de la santé reconnue par la RQTH.",
+        droit:"Si un trouble de santé mentale affecte durablement tes études ou ton travail, tu peux légitimement explorer cette piste, sans honte." },
+      { format:"situation", question:"Karim vit avec un trouble bipolaire stabilisé par un traitement. Il hésite à en parler à son centre de formation par peur du jugement. Que peut-il faire ?",
+        options:["Rien, il doit gérer ça seul pour éviter d'être jugé","Il peut solliciter le service de santé étudiant ou la mission handicap de son établissement, en toute confidentialité"], correct:1,
+        explication:"Les missions handicap des établissements sont précisément là pour accompagner ce type de situation sans jugement.",
+        droit:"Le secret médical s'applique aussi en milieu scolaire : un établissement ne peut pas exiger de connaître le détail du diagnostic." }
+    ]
+  },
+  {
+    num:5, chapter:"sante", title:"La salle confidentielle", flavor:"Une porte fermée, avec un cadenas dessiné dessus.",
+    categorie:"Confidentialité",
+    questions:[
+      { format:"qcm", question:"Si tu as la RQTH, ton employeur connaît-il la nature précise de ton handicap ?",
+        options:["Oui, c'est obligatoire de tout détailler","Non, le secret médical s'applique : il sait seulement que tu as la RQTH"], correct:1,
+        explication:"Le secret médical protège ta vie privée en toutes circonstances.",
+        droit:"Tu peux demander des aménagements sans jamais avoir à expliquer le détail médical de ta situation." },
+      { format:"vf", question:"Vrai ou faux : un recruteur peut refuser de t'embaucher uniquement parce que tu as mentionné avoir la RQTH.",
+        options:["Vrai","Faux"], correct:1,
+        explication:"Faux. C'est une discrimination interdite par la loi, sur le même principe que l'origine ou le sexe.",
+        droit:"Si tu penses avoir vécu une discrimination liée au handicap, tu peux saisir le Défenseur des droits." }
+    ]
+  },
+  {
+    num:6, chapter:"etudes", title:"Le bureau du proviseur", flavor:"Une porte avec un trophée scolaire posé devant.",
+    categorie:"Aménagements scolaires",
+    questions:[
+      { format:"qcm", question:"Quel document permet d'obtenir des aménagements d'examens (tiers-temps, secrétaire...) au lycée ou dans le supérieur ?",
+        options:["Un mot des parents","Un avis médical via la MDPH ou le médecin scolaire, formalisé dans un dossier d'aménagement", "Aucun document n'est nécessaire"], correct:1,
+        explication:"Les aménagements d'examens s'obtiennent via une procédure officielle, généralement instruite par un médecin désigné par la MDPH.",
+        droit:"Tu peux demander ces aménagements même sans avoir la RQTH : ce sont deux démarches distinctes mais complémentaires." },
+      { format:"situation", question:"Yasmine entre en BTS et a besoin d'un ordinateur adapté pour prendre des notes. Vers qui se tourner en priorité dans son établissement ?",
+        options:["Le secrétariat général uniquement","La mission ou le référent handicap de l'établissement"], correct:1,
+        explication:"Chaque lycée et établissement du supérieur dispose en général d'un référent ou d'une mission handicap dédiée.",
+        droit:"Ce service existe justement pour faire le lien entre les besoins de l'étudiant·e et les aménagements possibles, gratuitement." }
+    ]
+  },
+  {
+    num:7, chapter:"etudes", title:"Le couloir des admissions", flavor:"Un panneau avec des affiches de différentes écoles.",
+    categorie:"Accès post-bac",
+    questions:[
+      { format:"vf", question:"Vrai ou faux : avoir un dossier de handicap ou une RQTH peut faciliter certaines démarches d'admission ou d'aménagement dans le supérieur.",
+        options:["Vrai","Faux"], correct:0,
+        explication:"Vrai. Cela permet notamment d'accéder à des dispositifs d'accompagnement spécifiques (tutorat, aménagement de cursus, aide humaine).",
+        droit:"Ce n'est pas un frein à l'admission : c'est un levier pour sécuriser la réussite, en lien avec le service handicap de l'établissement visé." },
+      { format:"debat", question:"\"Si je dis que j'ai un handicap sur mon dossier d'admission, on va m'écarter.\" Vrai risque ou idée reçue ? Discutez-en.",
+        prompt:"Échangez en équipe : avez-vous déjà entendu cette crainte ? D'où vient-elle, selon vous ?",
+        explication:"La discrimination à l'admission sur ce motif est interdite par la loi. Dans les faits, signaler ses besoins en amont permet souvent de mieux préparer l'accueil.",
+        droit:"Tu n'es jamais obligé·e de communiquer cette information avant l'admission elle-même : c'est toi qui choisis le moment." }
+    ]
+  },
+  {
+    num:8, chapter:"aides", title:"Le guichet des aides", flavor:"Un comptoir avec une pile de formulaires.",
+    categorie:"AAH et PCH",
+    questions:[
+      { format:"qcm", question:"Que signifie l'acronyme AAH ?",
+        options:["Aide à l'Autonomie des Handicapés","Allocation aux Adultes Handicapés","Assurance Annuelle Handicap"], correct:1,
+        explication:"L'AAH (Allocation aux Adultes Handicapés) est une aide financière versée sous conditions de ressources et de taux d'incapacité.",
+        droit:"L'AAH est accessible dès 20 ans (ou 16 ans si tu n'es plus à la charge de tes parents), sous conditions définies par la MDPH." },
+      { format:"qcm", question:"Quelle aide permet de financer du matériel ou un accompagnement humain lié au handicap (PCH) ?",
+        options:["La Prestation de Compensation du Handicap","La Prime d'Activité","La Bourse au mérite"], correct:0,
+        explication:"La PCH finance des aides techniques, humaines ou liées à l'aménagement du logement ou du véhicule.",
+        droit:"Ces aides ne sont pas automatiques : il faut en faire la demande active auprès de la MDPH, avec un dossier précis sur les besoins réels." }
+    ]
+  },
+  {
+    num:9, chapter:"aides", title:"Le tableau des bourses", flavor:"Un tableau d'affichage avec des petites annonces.",
+    categorie:"Bourses et études",
+    questions:[
+      { format:"situation", question:"Adam touche déjà une bourse sur critères sociaux. A-t-il aussi le droit de demander des aides liées à son handicap en parallèle ?",
+        options:["Non, il faut choisir une seule aide","Oui, certaines aides liées au handicap peuvent se cumuler avec d'autres bourses, selon les conditions"], correct:1,
+        explication:"Les aides liées au handicap (PCH, aides spécifiques de l'établissement) répondent à des besoins différents de la bourse sociale et peuvent souvent se cumuler.",
+        droit:"Chaque situation est étudiée individuellement par la MDPH ou le CROUS : ne pars jamais du principe que \"ça ne marche pas pour moi\" sans vérifier." },
+      { format:"vf", question:"Vrai ou faux : faire une demande d'aide à la MDPH coûte de l'argent (frais de dossier).",
+        options:["Vrai","Faux"], correct:1,
+        explication:"Faux. La demande à la MDPH est entièrement gratuite, quel que soit le résultat.",
+        droit:"Aucune démarche auprès de la MDPH ne doit jamais t'être facturée : méfie-toi de tout service payant qui prétendrait \"accélérer\" ta demande." }
+    ]
+  },
+  {
+    num:10, chapter:"travail", title:"Le bureau de l'entreprise", flavor:"Une porte de bureau avec un organigramme affiché.",
+    categorie:"Obligation d'emploi",
+    questions:[
+      { format:"qcm", question:"À partir de combien de salariés une entreprise privée doit-elle employer au moins 6 % de travailleurs en situation de handicap ?",
+        options:["10 salariés","20 salariés","50 salariés"], correct:1,
+        explication:"L'obligation d'emploi (OETH) s'applique aux entreprises de 20 salariés et plus.",
+        droit:"Cette obligation légale crée de vraies opportunités : beaucoup d'entreprises recrutent activement des personnes RQTH pour y répondre." },
+      { format:"debat", question:"\"Si je dis que j'ai la RQTH en entretien, je n'aurai jamais le poste.\" Comment décortiquer cette peur en équipe ?",
+        prompt:"Discutez : à quel moment, selon vous, est-il le plus stratégique de mentionner sa RQTH dans un processus de recrutement ?",
+        explication:"Rien n'oblige à le dire en entretien. Beaucoup de candidat·es choisissent de l'évoquer après l'embauche, au moment de demander un aménagement concret.",
+        droit:"Le choix du moment t'appartient entièrement : avant, pendant ou après l'embauche, voire jamais si tu n'as besoin d'aucun aménagement." }
+    ]
+  },
+  {
+    num:11, chapter:"travail", title:"Le panneau de l'alternance", flavor:"Un présentoir de brochures sur l'apprentissage.",
+    categorie:"Alternance et stage",
+    questions:[
+      { format:"qcm", question:"Un·e alternant·e RQTH peut-il/elle bénéficier d'aménagements de poste financés par des aides spécifiques ?",
+        options:["Non, l'alternance exclut ce type d'aide","Oui, des aides existent pour adapter le poste, les horaires ou le matériel en alternance"], correct:1,
+        explication:"Des dispositifs (notamment via l'Agefiph) financent l'adaptation des postes en apprentissage ou en alternance.",
+        droit:"Ne renonce jamais à une offre d'alternance par peur du coût d'un aménagement : des aides existent justement pour ça, à la charge de l'employeur ou de l'Agefiph." },
+      { format:"situation", question:"Manon postule en stage et se demande si elle doit signaler son handicap moteur dès sa lettre de motivation. Quelle est la meilleure pratique ?",
+        options:["Le signaler systématiquement dès la candidature, sans exception","Choisir librement le moment, souvent au moment où l'aménagement devient concrètement utile (ex: avant la visite des locaux)"], correct:1,
+        explication:"Il n'existe pas d'obligation ni de moment unique idéal : le bon moment dépend du besoin réel d'aménagement.",
+        droit:"Tu peux solliciter une visite des locaux en amont pour évaluer l'accessibilité, sans révéler le détail de ton handicap si tu ne le souhaites pas." }
+    ]
+  },
+  {
+    num:12, chapter:"demarche", title:"Station finale — Le guichet", flavor:"Le comptoir où tout commence vraiment.",
+    categorie:"Faire sa demande",
+    questions:[
+      { format:"qcm", question:"Auprès de quel organisme dois-tu déposer ta demande de RQTH ?",
+        options:["À la mairie","À la MDPH (Maison Départementale des Personnes Handicapées)","Directement à ton employeur"], correct:1,
+        explication:"C'est la MDPH de ton département qui instruit les demandes de RQTH, d'AAH et d'autres aides liées au handicap.",
+        droit:"La demande est gratuite, possible dès 16 ans, et n'engage à rien : avoir la RQTH est un choix que tu peux activer ou non selon tes besoins." },
+      { format:"vf", question:"Vrai ou faux : une fois la RQTH obtenue, tu es obligé·e de la mentionner partout, y compris à chaque nouvel employeur.",
+        options:["Vrai","Faux"], correct:1,
+        explication:"Faux. La mention de la RQTH à un employeur reste toujours ton choix, poste après poste.",
+        droit:"Tu repars de zéro à chaque nouvelle situation : rien n'est automatique ni définitivement transmis sans ton accord." }
+    ]
+  }
+];
+
+const rightsRecap = [
+  { ico:"🔒", title:"Confidentialité totale", txt:"Le secret médical protège la nature de ton handicap. Personne n'a à la connaître sans ton accord." },
+  { ico:"🛠️", title:"Droit aux aménagements", txt:"Matériel adapté, horaires, tiers temps aux examens, télétravail : la RQTH ouvre la porte aux aménagements raisonnables." },
+  { ico:"🧠", title:"Santé mentale incluse", txt:"Troubles psychiques, dys, maladies chroniques invisibles : la RQTH n'est pas réservée au handicap visible." },
+  { ico:"🎓", title:"Un appui pendant les études", txt:"Aménagements d'examens, référents handicap, aides spécifiques : ces dispositifs existent dès le lycée et dans le supérieur." },
+  { ico:"💶", title:"Des aides financières dédiées", txt:"AAH, PCH, aides au matériel ou à l'alternance : plusieurs dispositifs sont cumulables selon ta situation." },
+  { ico:"📍", title:"Une démarche réversible", txt:"Tu peux demander la RQTH dès 16 ans, sans obligation de l'utiliser immédiatement, et la renouveler ou l'arrêter selon ta situation." }
+];
+
+const agendaPlan = [
+  { time:"0–5 min", title:"Lancement", desc:"Accueil, présentation du parcours en 6 chapitres et 12 stations, formation des équipes.", detail:"Affiche les 12 stations dans la salle (ou utilise les fiches imprimables ci-dessous). Forme des équipes de 2 à 4 jeunes. Précise que le parcours est organisé en 6 chapitres : Comprendre le handicap, Santé mentale, Études, Aides financières, Monde du travail, Faire sa demande." },
+  { time:"5–10 min", title:"Mise en contexte", desc:"Courte introduction orale sur la RQTH et pourquoi ce sujet concerne les jeunes dès 16 ans.", detail:"Insiste sur 3 messages avant de lancer le jeu : la RQTH concerne aussi les handicaps invisibles, elle est confidentielle, et c'est une démarche réversible et gratuite. Préviens que le parcours mélange QCM, vrai/faux, mises en situation et temps de débat en équipe. Signale aussi les options d'accessibilité (police, taille de texte, thème, lecture vocale) disponibles via l'icône ⚙ en haut de l'écran." },
+  { time:"10–45 min", title:"Le parcours (12 stations, 24 questions)", desc:"Les équipes parcourent les stations à leur rythme. Les questions \"débat\" demandent 2 minutes d'échange en équipe avant de continuer.", detail:"Circule entre les équipes, en particulier sur les stations de débat (3, 7, 10) qui suscitent le plus de discussion. Les stations santé mentale (4-5) et confidentialité méritent aussi un temps d'écoute si des jeunes réagissent personnellement." },
+  { time:"45–53 min", title:"Débrief collectif", desc:"Retour en groupe sur les découvertes, les surprises, les questions de débat abordées.", detail:"Reprends les 3 questions de débat (âge minimum, RQTH en entretien, signaler son handicap en candidature) et demande aux équipes ce qu'elles en ont conclu. Corrige les dernières idées reçues persistantes." },
+  { time:"53–60 min", title:"Clôture et ressources", desc:"Affichage de l'écran récapitulatif des droits, distribution du QR code de l'application à emporter.", detail:"Projette l'écran final (passeport des droits) en mode joueur. Rappelle que la démarche se fait à la MDPH, qu'aucune décision n'est à prendre dans l'immédiat, et que l'appli reste accessible après l'atelier via le QR code." }
+];
+
+/* ===================== ÉTAT ===================== */
+
+let state = { mode:'player', screen:'entry', current:0, qIndex:0, score:0, done:{}, progress:{} };
+let history = [];
+let timer = { seconds:3600, running:false, interval:null };
+let prefs = { font:'default', size:'medium', theme:'light', voiceOn:false };
+let activeAgendaIdx = 0;
+let synthUtterance = null;
+
+function pushHistory(){
+  history.push(JSON.parse(JSON.stringify({ mode:state.mode, screen:state.screen, current:state.current, qIndex:state.qIndex, agendaIdx:activeAgendaIdx })));
+  updateBackButton();
+}
+
+function updateBackButton(){
+  const btn = document.getElementById('back-btn');
+  if(history.length > 0) btn.classList.add('show');
+  else btn.classList.remove('show');
+}
+
+function goBack(){
+  if(history.length === 0) return;
+  const prev = history.pop();
+  state.mode = prev.mode;
+  state.screen = prev.screen;
+  state.current = prev.current;
+  state.qIndex = prev.qIndex;
+  activeAgendaIdx = prev.agendaIdx;
+  document.getElementById('btn-mode-player').setAttribute('aria-pressed', String(state.mode==='player'));
+  document.getElementById('btn-mode-facilitator').setAttribute('aria-pressed', String(state.mode==='facilitator'));
+  updateBackButton();
+  render(false);
+}
+
+function setMode(m){
+  if(state.mode === m) return;
+  pushHistory();
+  state.mode = m;
+  document.getElementById('btn-mode-player').setAttribute('aria-pressed', String(m==='player'));
+  document.getElementById('btn-mode-facilitator').setAttribute('aria-pressed', String(m==='facilitator'));
+  render(false);
+}
+
+function totalQuestions(){ return stations.reduce((acc,s)=>acc+s.questions.length,0); }
+
+/* ===================== PRÉFÉRENCES ===================== */
+
+function togglePrefs(){
+  const panel = document.getElementById('prefs-panel');
+  const btn = document.getElementById('prefs-toggle');
+  const open = panel.classList.toggle('open');
+  btn.setAttribute('aria-expanded', String(open));
+  btn.setAttribute('aria-pressed', String(open));
+}
+
+function setFont(f){
+  prefs.font = f;
+  document.documentElement.setAttribute('data-font', f);
+  document.querySelectorAll('[data-font]').forEach(b => {
+    if(b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.dataset.font === f));
+  });
+}
+
+function setSize(s){
+  prefs.size = s;
+  document.documentElement.setAttribute('data-size', s);
+  document.querySelectorAll('[data-size]').forEach(b => {
+    if(b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.dataset.size === s));
+  });
+}
+
+function setTheme(t){
+  prefs.theme = t;
+  if(t === 'dark') document.documentElement.setAttribute('data-theme', 'dark');
+  else document.documentElement.removeAttribute('data-theme');
+  document.querySelectorAll('[data-theme]').forEach(b => {
+    if(b.tagName === 'BUTTON') b.setAttribute('aria-pressed', String(b.dataset.theme === t));
+  });
+}
+
+function setVoicePref(on){
+  prefs.voiceOn = on;
+  document.querySelectorAll('[data-voice]').forEach(b => {
+    b.setAttribute('aria-pressed', String((b.dataset.voice === 'on') === on));
+  });
+  render(false);
+}
+
+function speakText(text, btnEl){
+  if(!('speechSynthesis' in window)){
+    alert("La lecture vocale n'est pas disponible sur ce navigateur.");
+    return;
+  }
+  if(window.speechSynthesis.speaking){
+    window.speechSynthesis.cancel();
+    document.querySelectorAll('.speaking').forEach(el => el.classList.remove('speaking'));
+    if(synthUtterance && synthUtterance._btn === btnEl) { synthUtterance = null; return; }
+  }
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = 'fr-FR';
+  utter.rate = 0.95;
+  utter._btn = btnEl;
+  synthUtterance = utter;
+  if(btnEl) btnEl.classList.add('speaking');
+  utter.onend = () => { if(btnEl) btnEl.classList.remove('speaking'); synthUtterance = null; };
+  utter.onerror = () => { if(btnEl) btnEl.classList.remove('speaking'); synthUtterance = null; };
+  window.speechSynthesis.speak(utter);
+}
+
+/* ===================== RENDU ===================== */
+
+function render(recordHistory){
+  const main = document.getElementById('main');
+  if(state.mode === 'facilitator'){ main.innerHTML = renderFacilitator(); return; }
+  if(state.screen === 'entry') main.innerHTML = renderEntry();
+  else if(state.screen === 'station') main.innerHTML = renderStation(state.current, state.qIndex);
+  else if(state.screen === 'final') main.innerHTML = renderFinal();
+}
+
+/* ---------- ENTRÉE ---------- */
+
+function renderEntry(){
+  const cards = chapters.map((c, idx) => {
+    const range = c.stationRange;
+    const stCount = range[1] - range[0] + 1;
+    const qCount = stations.slice(range[0], range[1]+1).reduce((a,s)=>a+s.questions.length,0);
+    const stationIdxs = Array.from({length:stCount}, (_,k)=>range[0]+k);
+    const chapDone = stationIdxs.every(idx2 => state.done[idx2]);
+    return `
+      <button class="chapter-card" onclick="goToStation(${range[0]})">
+        <div class="cnum" aria-hidden="true">${String(idx+1).padStart(2,'0')}</div>
+        <div class="ctxt"><strong>${c.title}</strong><span>Stations ${range[0]+1} à ${range[1]+1}</span></div>
+        <div class="ccount">${stCount} station${stCount>1?'s':''} · ${qCount} questions${chapDone ? '<span class="ccheck">✓ Terminé</span>' : ''}</div>
+      </button>`;
+  }).join('');
+
+  return `
+    <div class="entry-wrap">
+      <div class="kicker">✨ Bienvenue sur le parcours</div>
+      <h1>12 stations.<br><span class="accent">${totalQuestions()} questions</span> à découvrir.</h1>
+      <p class="lede">Scanne le QR code affiché à chaque station de la salle, ou choisis un chapitre ci-dessous pour simuler le scan et démarrer.</p>
+      <div class="chapter-grid">${cards}</div>
+      <p class="entry-hint">💡 Astuce animateur : chaque équipe peut démarrer où elle veut, l'appli garde la trace de ce qui est validé.</p>
+    </div>
+  `;
+}
+
+function goToStation(i){
+  pushHistory();
+  state.current = i;
+  state.qIndex = 0;
+  state.screen = 'station';
+  render(false);
+}
+
+/* ---------- STATION ---------- */
+
+function chapterChipsHtml(currentStationIdx){
+  return chapters.map(c => {
+    const [start,end] = c.stationRange;
+    const allDone = Array.from({length:end-start+1}, (_,k)=>start+k).every(idx => state.done[idx]);
+    const isCurrent = currentStationIdx >= start && currentStationIdx <= end;
+    let cls = 'chapter-chip';
+    if(allDone) cls += ' done';
+    else if(isCurrent) cls += ' current';
+    return `<div class="${cls}">${c.title}</div>`;
+  }).join('');
+}
+
+function routeStripHtml(currentStationIdx){
+  return stations.map((s, idx) => {
+    let cls = 'route-node';
+    if(state.done[idx]) cls += ' done';
+    else if(idx === currentStationIdx) cls += ' current';
+    return `<div class="${cls}"></div>`;
+  }).join('');
+}
+
+function globalProgressHtml(){
+  const totalQ = totalQuestions();
+  const doneQ = Object.keys(state.progress).length;
+  const pct = Math.round((doneQ / totalQ) * 100);
+  const doneStations = Object.keys(state.done).length;
+  return `
+    <div class="global-progress" role="img" aria-label="Progression globale : ${doneQ} questions sur ${totalQ}, ${doneStations} stations validées sur ${stations.length}">
+      <span class="gp-label">🏁 ${pct}%</span>
+      <div class="gp-track"><div class="gp-fill" style="width:${pct}%"></div></div>
+      <span class="gp-badge">${doneStations}/${stations.length} stations ★</span>
+    </div>
+  `;
+}
+
+function renderStation(i, qIdx){
+  const s = stations[i];
+  const q = s.questions[qIdx];
+  const isStationDone = !!state.done[i];
+  const formatLabel = { qcm:"QCM", vf:"Vrai / Faux", situation:"Mise en situation", debat:"Débat d'équipe" };
+  const speakHtml = prefs.voiceOn
+    ? `<button class="speak-btn" type="button" aria-label="Écouter la question à voix haute" onclick='speakText(${JSON.stringify(q.question).replace(/'/g,"&#39;")}, this)'>🔊</button>`
+    : '';
+
+  let bodyHtml = '';
+  if(q.format === 'debat'){
+    bodyHtml = `
+      <div class="debate-prompt">${q.prompt}</div>
+      <div class="q-head"><div class="q-text">${q.question}</div>${speakHtml}</div>
+      <button class="debate-btn" id="debate-reveal" onclick="revealDebate(${i},${qIdx})">Voir l'éclairage après discussion</button>
+    `;
+  } else {
+    const optClass = q.format === 'vf' ? 'options vf-row' : 'options';
+    let optionsHtml = q.options.map((opt, idx) =>
+      `<button class="opt-btn" data-idx="${idx}" onclick="answer(${i},${qIdx},${idx})">${opt}</button>`
+    ).join('');
+    const questionBlock = q.format === 'situation'
+      ? `<div class="q-head"><div class="q-situation">${q.question}</div>${speakHtml}</div>`
+      : `<div class="q-head"><div class="q-text">${q.question}</div>${speakHtml}</div>`;
+    bodyHtml = `
+      ${questionBlock}
+      <div class="${optClass}" id="opt-wrap" role="group" aria-label="Choix de réponse">${optionsHtml}</div>
+    `;
+  }
+
+  return `
+    ${globalProgressHtml()}
+    <div class="chapter-bar">${chapterChipsHtml(i)}</div>
+    <div class="route-strip" role="img" aria-label="Progression : station ${i+1} sur ${stations.length}">${routeStripHtml(i)}</div>
+    <div class="sheet" id="station-sheet">
+      <div class="stamp-mark ${isStationDone ? 'show' : ''}" id="stamp" aria-hidden="true">VALIDÉ<br>★</div>
+      <div class="station-eyebrow">
+        <span class="station-num">STATION ${s.num} / ${stations.length}</span>
+        <span class="label">${s.categorie}</span>
+      </div>
+      <h2 class="station-title">${s.title}</h2>
+      <p class="station-flavor">${s.flavor}</p>
+      <div class="station-eyebrow">
+        <span class="q-progress">Question ${qIdx+1} / ${s.questions.length}</span>
+        <span class="format-tag ${q.format}">${formatLabel[q.format]}</span>
+      </div>
+      ${bodyHtml}
+      <div class="feedback" id="feedback" role="status"></div>
+      <div class="step-nav">
+        <button class="prev-step-btn ${(i>0 || qIdx>0) ? 'show' : ''}" onclick="prevStep(${i},${qIdx})">← Question précédente</button>
+        <button class="next-btn" id="next-btn" onclick="nextStep(${i},${qIdx})">${nextLabel(i,qIdx)}</button>
+      </div>
+    </div>
+  `;
+}
+
+function nextLabel(i, qIdx){
+  const s = stations[i];
+  if(qIdx < s.questions.length - 1) return "Question suivante →";
+  if(i === stations.length - 1) return "Voir le passeport des droits";
+  return "Station suivante →";
+}
+
+function prevStep(i, qIdx){
+  if(qIdx > 0){
+    state.qIndex = qIdx - 1;
+  } else if(i > 0){
+    state.current = i - 1;
+    state.qIndex = stations[i-1].questions.length - 1;
+  } else {
+    state.screen = 'entry';
+  }
+  render(false);
+}
+
+function revealDebate(i, qIdx){
+  const s = stations[i];
+  const q = s.questions[qIdx];
+  const revealBtn = document.getElementById('debate-reveal');
+  if(revealBtn) revealBtn.style.display = 'none';
+  const fb = document.getElementById('feedback');
+  fb.classList.add('show','neutral');
+  fb.innerHTML = `💬 ${q.explication}<div class="right-info"><strong>Ton droit ici&nbsp;:</strong> ${q.droit}</div>`;
+  markQuestionDone(i, qIdx, true);
+  document.getElementById('next-btn').classList.add('show');
+}
+
+function answer(stationIdx, qIdx, choiceIdx){
+  const s = stations[stationIdx];
+  const q = s.questions[qIdx];
+  const buttons = document.querySelectorAll('#opt-wrap .opt-btn');
+  buttons.forEach(b => b.disabled = true);
+
+  const correct = choiceIdx === q.correct;
+  buttons[choiceIdx].classList.add(correct ? 'correct' : 'wrong');
+  if(!correct) buttons[q.correct].classList.add('correct');
+
+  const fb = document.getElementById('feedback');
+  fb.classList.add('show', correct ? 'good' : 'bad');
+  fb.innerHTML = `${correct ? '🎉 ' : ''}${q.explication}<div class="right-info"><strong>Ton droit ici&nbsp;:</strong> ${q.droit}</div>`;
+
+  markQuestionDone(stationIdx, qIdx, correct);
+  document.getElementById('next-btn').classList.add('show');
+
+  if(!correct){
+    setTimeout(() => {
+      buttons.forEach((b, idx) => { if(idx !== q.correct) b.disabled = false; });
+      buttons.forEach(b => b.classList.remove('wrong'));
+    }, 1400);
+  }
+}
+
+function markQuestionDone(stationIdx, qIdx, success){
+  const key = stationIdx + '-' + qIdx;
+  if(!state.progress[key]){
+    state.progress[key] = true;
+    if(success) state.score += 10;
+  }
+  const s = stations[stationIdx];
+  const allDone = s.questions.every((_, idx) => state.progress[stationIdx + '-' + idx]);
+  if(allDone){
+    state.done[stationIdx] = true;
+    const stampEl = document.getElementById('stamp');
+    if(stampEl) stampEl.classList.add('show');
+  }
+  const gp = document.querySelector('.global-progress');
+  if(gp) gp.outerHTML = globalProgressHtml();
+}
+
+function nextStep(i, qIdx){
+  const s = stations[i];
+  if(qIdx < s.questions.length - 1){
+    state.qIndex = qIdx + 1;
+  } else if(i < stations.length - 1){
+    state.current = i + 1;
+    state.qIndex = 0;
+  } else {
+    state.screen = 'final';
+    render(false);
+    return;
+  }
+  render(false);
+}
+
+/* ---------- FINAL ---------- */
+
+function renderFinal(){
+  const items = rightsRecap.map(r => `
+    <div class="right-item">
+      <div class="ico" aria-hidden="true">${r.ico}</div>
+      <div class="txt"><strong>${r.title}</strong><span>${r.txt}</span></div>
+    </div>`).join('');
+
+  const stationsDone = Object.keys(state.done).length;
+  const qDone = Object.keys(state.progress).length;
+
+  return `
+    <div class="sheet passport">
+      <div class="label">🏆 Passeport des droits</div>
+      <h2>Parcours terminé !</h2>
+      <div class="score-line">${stationsDone} / ${stations.length} stations · ${qDone} / ${totalQuestions()} questions · ${state.score} points</div>
+      <div class="rights-list">${items}</div>
+    </div>
+    <div class="resource-box">
+      <h3>Emporte le parcours avec toi</h3>
+      <p>Scanne ce code pour retrouver l'appli sur ton téléphone, refaire le parcours ou le partager.</p>
+      <div class="qr-block" role="img" aria-label="QR code vers l'application du parcours RQTH"></div>
+      <div class="qr-note">handiparcours-rqth.app/parcours</div>
+    </div>
+    <button class="restart-btn" onclick="restart()">Recommencer le parcours</button>
+  `;
+}
+
+function restart(){
+  history = [];
+  updateBackButton();
+  state = { mode:'player', screen:'entry', current:0, qIndex:0, score:0, done:{}, progress:{} };
+  render(false);
+}
+
+/* ===================== MODE ANIMATEUR ===================== */
+
+function renderFacilitator(){
+  const agendaHtml = agendaPlan.map((a, idx) => `
+    <button class="agenda-item" aria-pressed="${idx === activeAgendaIdx}" onclick="selectAgenda(${idx})">
+      <div class="agenda-time">${a.time}</div>
+      <div class="agenda-body"><strong>${a.title}</strong><p>${a.desc}</p></div>
+    </button>`).join('');
+
+  const qrGrid = stations.map(s => `
+    <div class="qr-card-mini">
+      <div class="qr-block" role="img" aria-label="QR code station ${s.num}"></div>
+      <strong>St. ${s.num}</strong>
+      <span>${s.categorie}</span>
+    </div>`).join('');
+
+  return `
+    <div class="fac-header">
+      <div>
+        <h1>Déroulé d'atelier — 1h</h1>
+        <p>Le Parcours RQTH · 12 stations · ${totalQuestions()} questions · sensibilisation aux droits des jeunes pouvant prétendre à la RQTH.</p>
+      </div>
+      <div class="timer-box">
+        <div class="t-label">TEMPS RESTANT</div>
+        <div class="t-val" id="timer-display" aria-live="off">${formatTime(timer.seconds)}</div>
+        <div class="t-controls">
+          <button onclick="toggleTimer()" id="timer-toggle">${timer.running ? 'Pause' : 'Démarrer'}</button>
+          <button onclick="resetTimer()">Réinitialiser</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="agenda" role="group" aria-label="Déroulé de l'atelier">${agendaHtml}</div>
+
+    <div class="sheet" id="fac-detail">
+      <div class="label">Note d'animation</div>
+      <h3 style="margin-top:0.4rem;">${agendaPlan[activeAgendaIdx].title}</h3>
+      <p style="color:var(--text-secondary); margin-top:0.5rem;">${agendaPlan[activeAgendaIdx].detail}</p>
+    </div>
+
+    <h2 style="margin-top:2rem; font-size:1.1em;">QR codes à imprimer pour chaque station</h2>
+    <div class="qr-grid">${qrGrid}</div>
+
+    <div class="printable-note">
+      Imprime ces 12 cartes et place-les aux stations physiques de la salle (portes, bureaux, couloirs, panneaux...). Chaque QR code peut renvoyer vers cette appli avec le numéro de station en paramètre, ou être remplacé par un simple code que les jeunes saisissent à l'écran d'accueil. Les stations de débat (3, 7, 10) gagnent à être placées dans des coins plus calmes de la salle pour permettre l'échange en équipe.
+    </div>
+  `;
+}
+
+function selectAgenda(idx){ activeAgendaIdx = idx; render(false); }
+
+function formatTime(s){
+  const m = Math.floor(s/60).toString().padStart(2,'0');
+  const sec = (s%60).toString().padStart(2,'0');
+  return `${m}:${sec}`;
+}
+
+function toggleTimer(){
+  timer.running = !timer.running;
+  if(timer.running){
+    timer.interval = setInterval(() => {
+      if(timer.seconds > 0){
+        timer.seconds--;
+        const d = document.getElementById('timer-display');
+        if(d) d.textContent = formatTime(timer.seconds);
+      } else {
+        clearInterval(timer.interval);
+        timer.running = false;
+      }
+    }, 1000);
+  } else {
+    clearInterval(timer.interval);
+  }
+  const btn = document.getElementById('timer-toggle');
+  if(btn) btn.textContent = timer.running ? 'Pause' : 'Démarrer';
+}
+
+function resetTimer(){
+  clearInterval(timer.interval);
+  timer.running = false;
+  timer.seconds = 3600;
+  render(false);
+}
+
+/* ===================== INIT ===================== */
+updateBackButton();
+render(false);
+</script>
+</body>
+</html>
