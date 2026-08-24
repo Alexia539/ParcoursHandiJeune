@@ -614,7 +614,7 @@ const stations = [
         droit:"Tu peux anticiper la démarche avant même d'avoir besoin de l'activer concrètement." },
       { format:"debat", question:"Certain·es jeunes pensent que \"demander la RQTH trop tôt, c'est s'enfermer dans une étiquette pour la vie\". Qu'en pensez-vous en équipe ?",
         prompt:"Discutez 2 minutes en équipe : qu'est-ce qui vous semble vrai ou faux dans cette affirmation ?",
-        explication:"La RQTH est attribuée pour une durée limitée (en général 1 à 10 ans), renouvelable ou non. Ce n'est pas une étiquette permanente, mais un statut administratif réversible.",
+        explication:"La RQTH est attribuée pour une durée limitée (en général 1 à 10 ans), renouvelable ou non, mais elle peut aussi désormais être accordée sans limitation de durée (SLD) dans certains cas. Ce n'est pas une étiquette permanente, mais un statut administratif qui peut changer.",
         droit:"Tu gardes le contrôle : tu peux ne pas renouveler, ne jamais l'utiliser auprès d'un employeur, ou l'activer seulement quand tu en as besoin." }
     ]
   },
@@ -623,11 +623,11 @@ const stations = [
     categorie:"Santé mentale et RQTH",
     questions:[
       { format:"qcm", question:"Une dépression sévère ou des troubles anxieux durables peuvent-ils ouvrir droit à la RQTH ?",
-        options:["Non, la RQTH ne concerne que le handicap physique","Oui, s'ils impactent durablement la vie professionnelle ou les études"], correct:1,
+        options:["Non, la RQTH ne concerne que le handicap physique","Oui, s'ils impactent durablement la vie professionnelle ou la vie personnelle"], correct:1,
         explication:"La santé mentale fait partie intégrante de la santé reconnue par la RQTH.",
         droit:"Si un trouble de santé mentale affecte durablement tes études ou ton travail, tu peux légitimement explorer cette piste, sans honte." },
       { format:"situation", question:"Karim vit avec un trouble bipolaire stabilisé par un traitement. Il hésite à en parler à son centre de formation par peur du jugement. Que peut-il faire ?",
-        options:["Rien, il doit gérer ça seul pour éviter d'être jugé","Il peut solliciter le service de santé étudiant ou la mission handicap de son établissement, en toute confidentialité"], correct:1,
+        options:["Rien, il doit gérer ça seul pour éviter d'être jugé","Il peut solliciter le service de santé étudiant, la mission handicap de son établissement, ou le Dispositif Formation Accompagnée (DFA), en toute confidentialité"], correct:1,
         explication:"Les missions handicap des établissements sont précisément là pour accompagner ce type de situation sans jugement.",
         droit:"Le secret médical s'applique aussi en milieu scolaire : un établissement ne peut pas exiger de connaître le détail du diagnostic." }
     ]
@@ -640,7 +640,7 @@ const stations = [
         options:["Oui, c'est obligatoire de tout détailler","Non, le secret médical s'applique : il sait seulement que tu as la RQTH"], correct:1,
         explication:"Le secret médical protège ta vie privée en toutes circonstances.",
         droit:"Tu peux demander des aménagements sans jamais avoir à expliquer le détail médical de ta situation." },
-      { format:"vf", question:"Vrai ou faux : un recruteur peut refuser de t'embaucher uniquement parce que tu as mentionné avoir la RQTH.",
+      { format:"vf", question:"Vrai ou faux : un employeur peut refuser de t'embaucher uniquement parce que tu as mentionné avoir la RQTH.",
         options:["Vrai","Faux"], correct:1,
         explication:"Faux. C'est une discrimination interdite par la loi, sur le même principe que l'origine ou le sexe.",
         droit:"Si tu penses avoir vécu une discrimination liée au handicap, tu peux saisir le Défenseur des droits." }
@@ -650,12 +650,12 @@ const stations = [
     num:6, chapter:"etudes", title:"Le bureau du proviseur", flavor:"Une porte avec un trophée scolaire posé devant.",
     categorie:"Aménagements scolaires",
     questions:[
-      { format:"qcm", question:"Quel document permet d'obtenir des aménagements d'examens (tiers-temps, secrétaire...) au lycée ou dans le supérieur ?",
-        options:["Un mot des parents","Un avis médical via la MDPH ou le médecin scolaire, formalisé dans un dossier d'aménagement", "Aucun document n'est nécessaire"], correct:1,
+      { format:"qcm", question:"Quel document permet d'obtenir des aménagements d'examens (tiers-temps, secrétaire...) au lycée ?",
+        options:["Un mot des parents","Un avis médical via la MDPH ou le médecin scolaire, ou tout est inscrit dans un dossier d'aménagement", "Aucun document n'est nécessaire"], correct:1,
         explication:"Les aménagements d'examens s'obtiennent via une procédure officielle, généralement instruite par un médecin désigné par la MDPH.",
         droit:"Tu peux demander ces aménagements même sans avoir la RQTH : ce sont deux démarches distinctes mais complémentaires." },
       { format:"situation", question:"Yasmine entre en BTS et a besoin d'un ordinateur adapté pour prendre des notes. Vers qui se tourner en priorité dans son établissement ?",
-        options:["Le secrétariat général uniquement","La mission ou le référent handicap de l'établissement"], correct:1,
+        options:["Le secrétariat général uniquement","La mission ou le référent handicap de l'établissement, la MDS, les assistantes sociales, ou le référent CEJ"], correct:1,
         explication:"Chaque lycée et établissement du supérieur dispose en général d'un référent ou d'une mission handicap dédiée.",
         droit:"Ce service existe justement pour faire le lien entre les besoins de l'étudiant·e et les aménagements possibles, gratuitement." }
     ]
@@ -664,7 +664,7 @@ const stations = [
     num:7, chapter:"etudes", title:"Le couloir des admissions", flavor:"Un panneau avec des affiches de différentes écoles.",
     categorie:"Accès post-bac",
     questions:[
-      { format:"vf", question:"Vrai ou faux : avoir un dossier de handicap ou une RQTH peut faciliter certaines démarches d'admission ou d'aménagement dans le supérieur.",
+      { format:"vf", question:"Vrai ou faux : avoir un dossier de handicap ou une RQTH peut faciliter certaines démarches d'admission ou d'aménagement dans les études supérieures ou les concours administratifs.",
         options:["Vrai","Faux"], correct:0,
         explication:"Vrai. Cela permet notamment d'accéder à des dispositifs d'accompagnement spécifiques (tutorat, aménagement de cursus, aide humaine).",
         droit:"Ce n'est pas un frein à l'admission : c'est un levier pour sécuriser la réussite, en lien avec le service handicap de l'établissement visé." },
@@ -720,7 +720,7 @@ const stations = [
     num:11, chapter:"travail", title:"Le panneau de l'alternance", flavor:"Un présentoir de brochures sur l'apprentissage.",
     categorie:"Alternance et stage",
     questions:[
-      { format:"qcm", question:"Un·e alternant·e RQTH peut-il/elle bénéficier d'aménagements de poste financés par des aides spécifiques ?",
+      { format:"qcm", question:"Un·e alternant·e RQTH peut-il/elle bénéficier d'aménagements de poste ?",
         options:["Non, l'alternance exclut ce type d'aide","Oui, des aides existent pour adapter le poste, les horaires ou le matériel en alternance"], correct:1,
         explication:"Des dispositifs (notamment via l'Agefiph) financent l'adaptation des postes en apprentissage ou en alternance.",
         droit:"Ne renonce jamais à une offre d'alternance par peur du coût d'un aménagement : des aides existent justement pour ça, à la charge de l'employeur ou de l'Agefiph." },
