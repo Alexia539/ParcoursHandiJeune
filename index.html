@@ -639,7 +639,11 @@ const stations = [
       { format:"qcm", question:"Si tu as la RQTH, ton employeur connaît-il la nature précise de ton handicap ?",
         options:["Oui, c'est obligatoire de tout détailler","Non, le secret médical s'applique : il sait seulement que tu as la RQTH"], correct:1,
         explication:"Le secret médical protège ta vie privée en toutes circonstances.",
-        droit:"Tu peux demander des aménagements sans jamais avoir à expliquer le détail médical de ta situation." }
+        droit:"Tu peux demander des aménagements sans jamais avoir à expliquer le détail médical de ta situation." },
+      { format:"vf", question:"Vrai ou faux : un employeur peut refuser de t'embaucher uniquement parce que tu as mentionné avoir la RQTH.",
+        options:["Vrai","Faux"], correct:1,
+        explication:"Faux. C'est une discrimination interdite par la loi, sur le même principe que l'origine ou le sexe.",
+        droit:"Si tu penses avoir vécu une discrimination liée au handicap, tu peux saisir le Défenseur des droits." }
     ]
   },
   {
@@ -702,10 +706,6 @@ const stations = [
     num:10, chapter:"travail", title:"Le bureau de l'entreprise", flavor:"Une porte de bureau avec un organigramme affiché.",
     categorie:"Obligation d'emploi",
     questions:[
-      { format:"qcm", question:"À partir de combien de salariés une entreprise privée doit-elle employer au moins 6 % de travailleurs en situation de handicap ?",
-        options:["10 salariés","20 salariés","50 salariés"], correct:1,
-        explication:"L'obligation d'emploi (OETH) s'applique aux entreprises de 20 salariés et plus.",
-        droit:"Cette obligation légale crée de vraies opportunités : beaucoup d'entreprises recrutent activement des personnes RQTH pour y répondre." },
       { format:"debat", question:"\"Si je dis que j'ai la RQTH en entretien, je n'aurai jamais le poste.\" Comment décortiquer cette peur en équipe ?",
         prompt:"Discutez : à quel moment, selon vous, est-il le plus stratégique de mentionner sa RQTH dans un processus de recrutement ?",
         explication:"Rien n'oblige à le dire en entretien. Beaucoup de candidat·es choisissent de l'évoquer après l'embauche, au moment de demander un aménagement concret.",
