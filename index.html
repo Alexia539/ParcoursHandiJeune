@@ -493,6 +493,52 @@ main{ flex:1; max-width:760px; width:100%; margin:0 auto; padding:1.1rem 1rem 3r
 }
 .cert-form button:hover{ background:var(--accent-violet-strong); }
 
+/* ---------- QR UNIQUE + ÉTAPES ---------- */
+.qr-frame{
+  width:196px; margin:0 auto 0.8rem; padding:10px; border-radius:26px;
+  background:linear-gradient(145deg,#D9A27A,#B9764F);
+  box-shadow:0 5px 0 rgba(0,0,0,0.22);
+}
+.qr-frame .qr-block{ width:100%; height:auto; aspect-ratio:1/1; margin:0; padding:0; border-radius:16px; }
+.how-steps{ display:grid; grid-template-columns:repeat(3,1fr); gap:0.6rem; margin-top:1.2rem; }
+.how-step{
+  display:flex; flex-direction:column; align-items:center; gap:0.4rem;
+  font-weight:800; font-size:0.78em; line-height:1.25;
+}
+.how-ico{
+  width:46px; height:46px; border-radius:16px; background:rgba(255,255,255,0.22);
+  display:flex; align-items:center; justify-content:center;
+}
+.how-ico .ico-svg{ width:24px; height:24px; }
+
+/* ---------- ÉCRAN DE VERROUILLAGE ANIMATEUR ---------- */
+.lock-screen{ text-align:center; max-width:460px; margin:1.5rem auto 0; }
+.lock-icon{
+  width:72px; height:72px; margin:0 auto 1rem; border-radius:50%;
+  background:var(--accent-violet); color:var(--text-on-accent);
+  display:flex; align-items:center; justify-content:center;
+  box-shadow:0 4px 0 var(--accent-violet-strong);
+}
+.lock-icon .ico-svg{ width:34px; height:34px; }
+.lock-screen h2{ font-size:1.5em; margin-bottom:0.5rem; }
+.lock-text{ color:var(--text-secondary); font-weight:600; margin-bottom:1.3rem; }
+.lock-form{ display:flex; flex-direction:column; gap:0.6rem; text-align:left; }
+.lock-form input{
+  padding:0.8rem 1rem; border-radius:12px; border:2px solid var(--surface-border);
+  font-family:inherit; font-size:1.05em; background:var(--surface-card); color:var(--text-primary);
+}
+.lock-error{ min-height:1.3em; color:var(--accent-coral-strong); font-weight:800; font-size:0.9em; }
+.lock-actions{ display:flex; gap:0.6rem; flex-wrap:wrap; margin-top:0.3rem; }
+.lock-actions button{
+  flex:1; min-width:150px; padding:0.85rem 1rem; border-radius:var(--radius-md);
+  font-family:var(--font-display); font-weight:700; font-size:1em; cursor:pointer;
+  display:flex; align-items:center; justify-content:center; gap:0.4rem;
+}
+.lock-submit{ background:var(--accent-violet); color:var(--text-on-accent); border:none; }
+.lock-submit:hover{ background:var(--accent-violet-strong); }
+.lock-cancel{ background:var(--surface-muted); color:var(--text-primary); border:2.5px solid var(--surface-border); }
+.lock-cancel:hover{ border-color:var(--accent-teal); color:var(--accent-teal-strong); }
+
 /* ---------- FACILITATOR ---------- */
 .fac-header{ display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1.2rem; gap:1rem; flex-wrap:wrap; }
 .fac-header h1{ font-size:1.55em; }
@@ -665,6 +711,8 @@ const ICONS = {
   piggyBank: '<svg class="ico-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 12a5 5 0 015-5h5a5 5 0 015 5v1a2 2 0 01-2 2h-1v2h-2v-2H9v2H7v-2H6a2 2 0 01-2-2v-1z"/><circle cx="16" cy="10" r="0.6" fill="currentColor" stroke="none"/><path d="M9 7V5a2 2 0 012-2h2"/></svg>',
   briefcase: '<svg class="ico-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="7" width="18" height="13" rx="2"/><path d="M8 7V5a2 2 0 012-2h4a2 2 0 012 2v2"/><path d="M3 12h18"/></svg>',
   handshake: '<svg class="ico-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 11l4-3 3 2M22 11l-4-3-3 2"/><path d="M9 10l3 2 3-2"/><path d="M8 12l3 3 2-2 4 4"/></svg>',
+  phone: '<svg class="ico-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="7" y="2" width="10" height="20" rx="2.5"/><path d="M11 18h2"/></svg>',
+  qr: '<svg class="ico-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><path d="M14 14h3v3M21 14v.01M14 21h3M21 17v4"/></svg>',
   clipboardCheck: '<svg class="ico-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="6" y="4" width="12" height="16" rx="2"/><path d="M9 4V3a1 1 0 011-1h4a1 1 0 011 1v1"/><path d="M9 12l2 2 4-4"/></svg>'
 };
 function icon(name){ return ICONS[name] || ''; }
@@ -682,16 +730,12 @@ function stationColor(s){
   return chapterColors[idx] || 'var(--accent-coral)';
 }
 
-/* ===================== LIENS & QR CODES ===================== */
-function appBaseUrl(){
-  return window.location.origin + window.location.pathname;
-}
-function stationUrl(num){
-  return appBaseUrl() + '?station=' + num;
-}
-function qrImageUrl(data, size){
-  return 'https://api.qrserver.com/v1/create-qr-code/?size=' + size + 'x' + size + '&data=' + encodeURIComponent(data);
-}
+/* ===================== QR CODE UNIQUE ===================== */
+/* QR code officiel du jeu de piste (issu de l'affiche de présentation).
+   Il renvoie vers : https://parcourshandijeune.netlify.app/ */
+const QR_IMG = "data:image/png;base64,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";
+const QR_URL_LABEL = "parcourshandijeune.netlify.app";
+
 function initFromQuery(){
   const params = new URLSearchParams(window.location.search);
   const stationParam = params.get('station');
@@ -764,9 +808,9 @@ const stations = [
     categorie:"Santé mentale et RQTH",
     questions:[
       { format:"qcm", question:"Inès traverse une période difficile avec une dépression sévère depuis plusieurs mois. Elle se demande si ça peut, comme un handicap physique, donner droit à la RQTH. Qu'en est-il ?",
-        options:["Non, la RQTH ne concerne que le handicap physique","Oui, s'ils impactent durablement la vie professionnelle ou les études"], correct:1,
+        options:["Non, la RQTH ne concerne que le handicap physique","Oui, s'ils impactent durablement la vie professionnelle, les études ou la vie privée"], correct:1,
         explication:"La santé mentale fait partie intégrante de la santé reconnue par la RQTH.",
-        droit:"Si un trouble de santé mentale affecte durablement tes études ou ton travail, tu peux légitimement explorer cette piste, sans honte." },
+        droit:"Si un trouble de santé mentale affecte durablement tes études, ton travail ou ta vie privée, tu peux légitimement explorer cette piste, sans honte." },
       { format:"situation", question:"Karim vit avec un trouble bipolaire stabilisé par un traitement. Il hésite à en parler à son centre de formation, par peur d'être jugé. À ton avis, que peut-il faire ?",
         options:["Rien, il doit gérer ça seul pour éviter d'être jugé","Il peut solliciter le service de santé étudiant ou la mission handicap de son établissement, en toute confidentialité"], correct:1,
         explication:"Les missions handicap des établissements sont précisément là pour accompagner ce type de situation sans jugement.",
@@ -779,8 +823,8 @@ const stations = [
     questions:[
       { format:"qcm", question:"Lucas vient d'obtenir la RQTH et s'inquiète : son futur employeur va-t-il connaître les détails précis de son handicap ?",
         options:["Oui, c'est obligatoire de tout détailler","Non, le secret médical s'applique : il sait seulement que tu as la RQTH"], correct:1,
-        explication:"Le secret médical protège ta vie privée en toutes circonstances.",
-        droit:"Tu peux demander des aménagements sans jamais avoir à expliquer le détail médical de ta situation." },
+        explication:"C'est confidentiel, sauf si tu décides toi-même d'en parler à ton employeur. Le secret médical protège ta vie privée en toutes circonstances.",
+        droit:"C'est toi qui choisis ce que tu dis ou non. Tu peux demander des aménagements sans jamais avoir à expliquer le détail médical de ta situation." },
       { format:"vf", question:"Sami a mentionné sa RQTH lors d'un entretien et n'a pas eu le poste. Un recruteur a-t-il le droit de refuser d'embaucher quelqu'un uniquement pour cette raison ? Vrai ou faux ?",
         options:["Vrai","Faux"], correct:1,
         explication:"Faux. C'est une discrimination interdite par la loi, sur le même principe que l'origine ou le sexe.",
@@ -791,10 +835,10 @@ const stations = [
     num:6, chapter:"etudes", title:"Les aménagements au lycée et dans le supérieur",
     categorie:"Aménagements scolaires",
     questions:[
-      { format:"qcm", question:"Chloé a besoin d'un tiers-temps pour ses examens. Comment peut-elle obtenir ce type d'aménagement, au lycée ou dans le supérieur ?",
+      { format:"qcm", question:"Chloé a besoin d'un tiers-temps pour ses examens. Comment peut-elle obtenir ce type d'aménagement, au lycée, dans le supérieur ou en formation ?",
         options:["Un mot des parents","Un avis médical via la MDPH ou le médecin scolaire, formalisé dans un dossier d'aménagement", "Aucun document n'est nécessaire"], correct:1,
-        explication:"Les aménagements d'examens s'obtiennent via une procédure officielle, généralement instruite par un médecin désigné par la MDPH.",
-        droit:"Tu peux demander ces aménagements même sans avoir la RQTH : ce sont deux démarches distinctes mais complémentaires." },
+        explication:"Les aménagements d'examens s'obtiennent via une procédure officielle, généralement instruite par un médecin désigné par la MDPH. C'est la même logique en formation : le centre de formation ou l'organisme certificateur s'appuie sur cet avis médical pour mettre en place les aménagements.",
+        droit:"Tu peux demander ces aménagements même sans avoir la RQTH : ce sont deux démarches distinctes mais complémentaires. Cela vaut aussi pour une formation (alternance, formation professionnelle) : parle-en au référent handicap de ton centre de formation." },
       { format:"situation", question:"Yasmine entre en BTS et a besoin d'un ordinateur adapté pour prendre des notes. Selon toi, vers qui se tourner en priorité ?",
         options:["Le secrétariat général uniquement","La mission ou le référent handicap de l'établissement"], correct:1,
         explication:"Chaque lycée et établissement du supérieur dispose en général d'un référent ou d'une mission handicap dédiée.",
@@ -897,11 +941,11 @@ const rightsRecap = [
 ];
 
 const agendaPlan = [
-  { time:"0–5 min", title:"Lancement", desc:"Accueil, présentation du parcours en 6 chapitres et 12 stations, formation des équipes.", detail:"Affiche les 12 stations dans la salle (ou utilise les fiches imprimables ci-dessous). Forme des équipes de 2 à 4 jeunes. Précise que le parcours est organisé en 6 chapitres : Comprendre le handicap, Santé mentale, Études, Aides financières, Monde du travail, Faire sa demande." },
+  { time:"0–5 min", title:"Lancement", desc:"Accueil, présentation du parcours en 6 chapitres et 12 stations, formation des équipes.", detail:"Affiche le QR code de l'affiche de présentation (ou projette-le). Forme des équipes de 2 à 4 jeunes. Précise que le parcours est organisé en 6 chapitres : Comprendre le handicap, Santé mentale, Études, Aides financières, Monde du travail, Faire sa demande." },
   { time:"5–10 min", title:"Mise en contexte", desc:"Courte introduction orale sur la RQTH et pourquoi ce sujet concerne les jeunes dès 16 ans.", detail:"Insiste sur 3 messages avant de lancer le jeu : la RQTH concerne aussi les handicaps invisibles, elle est confidentielle, et c'est une démarche réversible et gratuite. Préviens que le parcours mélange QCM, vrai/faux, mises en situation et temps de débat en équipe. Signale aussi les options d'accessibilité (police, taille de texte, thème, lecture vocale) disponibles via l'icône ⚙ en haut de l'écran." },
   { time:"10–45 min", title:"Le parcours (12 stations, 24 questions)", desc:"Les équipes parcourent les stations à leur rythme. Les questions \"débat\" demandent 2 minutes d'échange en équipe avant de continuer.", detail:"Circule entre les équipes, en particulier sur les stations de débat (3, 7, 10) qui suscitent le plus de discussion. Les stations santé mentale (4-5) et confidentialité méritent aussi un temps d'écoute si des jeunes réagissent personnellement." },
   { time:"45–53 min", title:"Débrief collectif", desc:"Retour en groupe sur les découvertes, les surprises, les questions de débat abordées.", detail:"Reprends les 3 questions de débat (âge minimum, RQTH en entretien, signaler son handicap en candidature) et demande aux équipes ce qu'elles en ont conclu. Corrige les dernières idées reçues persistantes." },
-  { time:"53–60 min", title:"Clôture et ressources", desc:"Affichage de l'écran récapitulatif des droits, distribution du QR code de l'application à emporter.", detail:"Projette l'écran final (passeport des droits) en mode joueur. Rappelle que la démarche se fait à la MDPH, qu'aucune décision n'est à prendre dans l'immédiat, et que l'appli reste accessible après l'atelier via le QR code." }
+  { time:"53–60 min", title:"Clôture et ressources", desc:"Affichage de l'écran récapitulatif des droits, rappel du QR code de l'application à emporter.", detail:"Projette l'écran final (passeport des droits) en mode joueur. Rappelle que la démarche se fait à la MDPH, qu'aucune décision n'est à prendre dans l'immédiat, et que l'appli reste accessible après l'atelier grâce au QR code de l'affiche." }
 ];
 
 /* ===================== ÉTAT ===================== */
@@ -912,6 +956,13 @@ let timer = { seconds:3600, running:false, interval:null };
 let prefs = { font:'default', size:'medium', theme:'light', voiceOn:false };
 let activeAgendaIdx = 0;
 let synthUtterance = null;
+
+/* ===================== CODE ANIMATEUR =====================
+   Modifie la valeur ci-dessous pour changer le code de déverrouillage.
+   Le mode Animateur (déroulé, minuteur, QR codes des stations) reste
+   inaccessible tant que ce code n'est pas saisi. */
+const FACILITATOR_CODE = "HANDILAB";
+let facUnlocked = false;
 
 
 function pushHistory(){
@@ -933,6 +984,7 @@ function goBack(){
   state.current = prev.current;
   state.qIndex = prev.qIndex;
   activeAgendaIdx = prev.agendaIdx;
+  if(state.mode === 'player') facUnlocked = false;
   document.getElementById('btn-mode-player').setAttribute('aria-pressed', String(state.mode==='player'));
   document.getElementById('btn-mode-facilitator').setAttribute('aria-pressed', String(state.mode==='facilitator'));
   updateBackButton();
@@ -943,6 +995,7 @@ function setMode(m){
   if(state.mode === m) return;
   pushHistory();
   state.mode = m;
+  if(m === 'player') facUnlocked = false;
   document.getElementById('btn-mode-player').setAttribute('aria-pressed', String(m==='player'));
   document.getElementById('btn-mode-facilitator').setAttribute('aria-pressed', String(m==='facilitator'));
   render(false);
@@ -1016,9 +1069,56 @@ function speakText(text, btnEl){
 
 /* ===================== RENDU ===================== */
 
+function renderLock(errorMsg){
+  return `
+    <div class="sheet lock-screen">
+      <div class="lock-icon" aria-hidden="true">${icon('lock')}</div>
+      <h2>Espace animateur</h2>
+      <p class="lock-text">Cet espace est réservé à l'animateur. Saisis le code de déverrouillage pour continuer.</p>
+      <form class="lock-form" onsubmit="return tryUnlock(event)" autocomplete="off">
+        <label for="fac-code-input" class="label">Code animateur</label>
+        <input id="fac-code-input" type="password" inputmode="text" autocomplete="off" autocapitalize="off" spellcheck="false" maxlength="40" aria-describedby="fac-code-error" placeholder="Code">
+        <div class="lock-error" id="fac-code-error" role="alert">${errorMsg ? escapeHtml(errorMsg) : ''}</div>
+        <div class="lock-actions">
+          <button type="button" class="lock-cancel" onclick="cancelUnlock()">${icon('arrowLeft')} Retour au parcours</button>
+          <button type="submit" class="lock-submit">${icon('check')} Déverrouiller</button>
+        </div>
+      </form>
+    </div>`;
+}
+
+function tryUnlock(e){
+  if(e) e.preventDefault();
+  const input = document.getElementById('fac-code-input');
+  const val = input ? input.value.trim() : '';
+  if(val === FACILITATOR_CODE){
+    facUnlocked = true;
+    render(false);
+  } else {
+    const err = document.getElementById('fac-code-error');
+    if(err) err.textContent = 'Code incorrect. Réessaie.';
+    if(input){ input.value = ''; input.focus(); }
+  }
+  return false;
+}
+
+function cancelUnlock(){
+  facUnlocked = false;
+  setMode('player');
+}
+
 function render(recordHistory){
   const main = document.getElementById('main');
-  if(state.mode === 'facilitator'){ main.innerHTML = renderFacilitator(); return; }
+  if(state.mode === 'facilitator'){
+    if(!facUnlocked){
+      main.innerHTML = renderLock('');
+      const input = document.getElementById('fac-code-input');
+      if(input) input.focus();
+      return;
+    }
+    main.innerHTML = renderFacilitator();
+    return;
+  }
   if(state.screen === 'entry') main.innerHTML = renderEntry();
   else if(state.screen === 'station') main.innerHTML = renderStation(state.current, state.qIndex);
   else if(state.screen === 'final') main.innerHTML = renderFinal();
@@ -1279,8 +1379,15 @@ function renderFinal(){
     <div class="resource-box">
       <h3>Emporte le parcours avec toi</h3>
       <p>Scanne ce code pour retrouver l'appli sur ton téléphone, refaire le parcours ou le partager.</p>
-      <img class="qr-block" src="${qrImageUrl(appBaseUrl(), 260)}" alt="QR code vers l'application du parcours RQTH">
-      <div class="qr-note">${window.location.host}${window.location.pathname}</div>
+      <div class="qr-frame">
+        <img class="qr-block" src="${QR_IMG}" alt="QR code du jeu de piste RQTH, à scanner avec ton téléphone">
+      </div>
+      <div class="qr-note">${QR_URL_LABEL}</div>
+      <div class="how-steps" aria-label="Comment jouer">
+        <div class="how-step"><span class="how-ico" aria-hidden="true">${icon('qr')}</span><span>Scanne le code</span></div>
+        <div class="how-step"><span class="how-ico" aria-hidden="true">${icon('flag')}</span><span>Choisis un chapitre</span></div>
+        <div class="how-step"><span class="how-ico" aria-hidden="true">${icon('checkCircle')}</span><span>Réponds et progresse</span></div>
+      </div>
     </div>
     <button class="restart-btn" onclick="restart()">Recommencer le parcours</button>
   `;
@@ -1404,6 +1511,7 @@ function restart(){
   history = [];
   updateBackButton();
   state = { mode:'player', screen:'entry', current:0, qIndex:0, done:{}, progress:{}, prenom:'' };
+  facUnlocked = false;
   render(false);
 }
 
@@ -1415,13 +1523,6 @@ function renderFacilitator(){
       <div class="agenda-time">${a.time}</div>
       <div class="agenda-body"><strong>${a.title}</strong><p>${a.desc}</p></div>
     </button>`).join('');
-
-  const qrGrid = stations.map(s => `
-    <div class="qr-card-mini">
-      <img class="qr-block" src="${qrImageUrl(stationUrl(s.num), 200)}" alt="QR code menant directement à la station ${s.num}">
-      <strong>St. ${s.num}</strong>
-      <span>${s.categorie}</span>
-    </div>`).join('');
 
   return `
     <div class="fac-header">
@@ -1447,11 +1548,8 @@ function renderFacilitator(){
       <p style="color:var(--text-secondary); margin-top:0.5rem;">${agendaPlan[activeAgendaIdx].detail}</p>
     </div>
 
-    <h2 style="margin-top:2rem; font-size:1.1em;">QR codes à imprimer pour chaque station</h2>
-    <div class="qr-grid">${qrGrid}</div>
-
     <div class="printable-note">
-      Imprime ces 12 cartes et place-les aux stations physiques de la salle (portes, bureaux, couloirs, panneaux...). Chaque QR code ouvre l'appli directement sur la bonne station dès qu'un smartphone le scanne — inutile de re-choisir le chapitre à l'écran d'accueil. Les stations de débat (3, 7, 10) gagnent à être placées dans des coins plus calmes de la salle pour permettre l'échange en équipe.
+      <strong>Un seul QR code pour tout le parcours :</strong> celui de l'affiche de présentation (« Le Jeu de Piste RQTH : Votre Guide d'Aventure »). Affiche-le ou projette-le en début d'atelier : les jeunes le scannent, choisissent un chapitre et progressent dans les 12 stations depuis leur téléphone. Les stations de débat (3, 7, 10) gagnent à se faire dans un coin plus calme de la salle pour permettre l'échange en équipe.
     </div>
   `;
 }
