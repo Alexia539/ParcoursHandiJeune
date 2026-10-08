@@ -53,6 +53,20 @@
   --warn:#B45309;
   --focus-ring:#1450C4;
 
+  /* couleurs dédiées aux encadrés de retour (bonne/mauvaise réponse, info) :
+     fonds clairs et unis + couleur d'encre bien plus sombre que le fond,
+     pour un contraste fort. Le vert et l'orange sont volontairement choisis
+     dans des familles de teintes différentes (bleu-vert vs orange-ambré)
+     afin de rester distinguables en cas de daltonisme (deutéranopie/
+     protanopie) ; chaque état porte aussi une icône et un style de bordure
+     différents, pour ne jamais dépendre de la couleur seule. */
+  --fb-good-bg:#E1F3E8;
+  --fb-good-ink:#0F6B3F;
+  --fb-warn-bg:#FCEAD4;
+  --fb-warn-ink:#8A4B05;
+  --fb-info-bg:#EAE3FA;
+  --fb-info-ink:#3F2A78;
+
   --font-display:'Fredoka','Nunito',sans-serif;
   --font-body:'Nunito','Segoe UI',sans-serif;
   --fs-scale:1;
@@ -82,6 +96,13 @@ html[data-theme="dark"]{
   --stamp:#5FE0C8;
   --warn:#FFB86B;
   --focus-ring:#9DC0FF;
+
+  --fb-good-bg:#163A2A;
+  --fb-good-ink:#7CEAB4;
+  --fb-warn-bg:#3B2710;
+  --fb-warn-ink:#FFCB8E;
+  --fb-info-bg:#2A2152;
+  --fb-info-ink:#DCCEFF;
 }
 
 html[data-font="verdana"]{ --font-body: Verdana, Geneva, sans-serif; --font-display: Verdana, Geneva, sans-serif; }
@@ -317,17 +338,17 @@ main{ flex:1; max-width:760px; width:100%; margin:0 auto; padding:1.1rem 1rem 3r
 }
 .opt-btn:hover{ border-color:var(--accent-teal); transform: translateX(3px) scale(1.01); }
 .opt-btn:active{ transform: scale(0.98); }
-.opt-btn.correct{ background:var(--stamp); color:var(--text-on-accent); border-color:var(--stamp); animation: bounce 0.4s ease; }
-.opt-btn.wrong{ background:color-mix(in srgb, var(--warn) 16%, var(--surface-card)); color:var(--text-primary); border:3px dashed var(--warn); animation: shake 0.35s ease; }
+.opt-btn.correct{ background:var(--accent-teal-strong); color:var(--text-on-accent); border-color:var(--accent-teal-strong); animation: bounce 0.4s ease; }
+.opt-btn.wrong{ background:var(--fb-warn-bg); color:var(--text-primary); border:3px dashed var(--fb-warn-ink); animation: shake 0.35s ease; }
 .opt-mark{ display:inline-flex; vertical-align:middle; margin-right:0.5rem; }
 .opt-mark .ico-svg{ width:1.25em; height:1.25em; }
-.opt-btn.wrong .opt-mark{ color:var(--warn); }
+.opt-btn.wrong .opt-mark{ color:var(--fb-warn-ink); }
 .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .fb-title{ display:flex; align-items:center; gap:0.5rem; font-family:var(--font-display); font-weight:700; font-size:1.05em; margin-bottom:0.5rem; }
 .fb-title .ico-svg{ width:1.4em; height:1.4em; }
-.feedback.good .fb-title .ico-svg{ color:var(--stamp); }
-.feedback.bad .fb-title .ico-svg{ color:var(--warn); }
-.feedback.neutral .fb-title .ico-svg{ color:var(--accent-violet); }
+.feedback.good .fb-title .ico-svg{ color:var(--fb-good-ink); }
+.feedback.bad .fb-title .ico-svg{ color:var(--fb-warn-ink); }
+.feedback.neutral .fb-title .ico-svg{ color:var(--fb-info-ink); }
 .feedback:focus-visible{ outline:3px solid var(--focus-ring); outline-offset:3px; }
 .opt-btn:disabled{ cursor:default; }
 @keyframes bounce{ 0%{transform:scale(1);} 40%{transform:scale(1.04);} 100%{transform:scale(1);} }
@@ -352,9 +373,9 @@ main{ flex:1; max-width:760px; width:100%; margin:0 auto; padding:1.1rem 1rem 3r
   font-weight:600;
 }
 .feedback.show{ display:block; animation:rise 0.35s ease; }
-.feedback.good{ background: color-mix(in srgb, var(--stamp) 16%, var(--surface-muted)); border-left:5px solid var(--stamp); }
-.feedback.bad{ background: color-mix(in srgb, var(--warn) 14%, var(--surface-muted)); border-left:5px dashed var(--warn); }
-.feedback.neutral{ background: color-mix(in srgb, var(--accent-violet) 14%, var(--surface-muted)); border-left:5px solid var(--accent-violet); }
+.feedback.good{ background: var(--fb-good-bg); border-left:5px solid var(--fb-good-ink); }
+.feedback.bad{ background: var(--fb-warn-bg); border-left:5px dashed var(--fb-warn-ink); }
+.feedback.neutral{ background: var(--fb-info-bg); border-left:5px solid var(--fb-info-ink); }
 @keyframes rise{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
@@ -662,7 +683,7 @@ footer .footer-legal .fl-brand{ color:var(--accent-teal-strong); font-family:var
     <div class="topbar-left">
       <button class="back-btn" id="back-btn" onclick="goBack()" aria-label="Revenir à l'écran précédent"><svg class="ico-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="M11 18l-6-6 6-6"/></svg> Retour</button>
       <div class="brand">
-        <div class="mark" aria-hidden="true"><img src="mascotte.png" alt=""></div>
+        <div class="mark" aria-hidden="true"><img id="mascot-img" src="mascotte.png" alt="" onerror="useMascotFallback(this)"></div>
         <div>
           <div class="name">Le Parcours RQTH</div>
           <div class="sub">JEU DE PISTE · DROITS DES JEUNES</div>
@@ -780,24 +801,30 @@ function stationColor(s){
   return chapterColors[idx] || 'var(--accent-coral)';
 }
 
+/* ===================== MASCOTTE ===================== */
+/* Si le fichier mascotte.png est introuvable (mauvais nom, mauvais dossier…),
+   on affiche automatiquement la mascotte intégrée issue de l'affiche. */
+const MASCOT_FALLBACK = "data:image/jpeg;base64,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";
+function useMascotFallback(img){
+  img.onerror = null;
+  img.src = MASCOT_FALLBACK;
+}
+
 /* ===================== QR CODE UNIQUE ===================== */
 /* QR code officiel du jeu de piste (issu de l'affiche de présentation).
    Il renvoie vers : https://parcourshandijeune.netlify.app/ */
 const QR_IMG = "data:image/png;base64,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";
 const QR_URL_LABEL = "parcourshandijeune.netlify.app";
 
-function initFromQuery(){
-  const params = new URLSearchParams(window.location.search);
-  const stationParam = params.get('station');
-  if(stationParam){
-    const num = parseInt(stationParam, 10);
-    const idx = stations.findIndex(s => s.num === num);
-    if(idx !== -1){
-      state.current = idx;
-      state.qIndex = 0;
-      state.screen = 'station';
+/* Les QR codes par station n'existent plus : l'appli démarre toujours sur
+   l'écran d'accueil. Si une ancienne adresse contient "?station=…", on la
+   nettoie pour que la carte d'accueil s'affiche bien. */
+function cleanStartUrl(){
+  try{
+    if(window.location.search){
+      window.history.replaceState(null, '', window.location.pathname);
     }
-  }
+  }catch(e){}
 }
 
 
@@ -943,8 +970,8 @@ const stations = [
     questions:[
       { format:"qcm", question:"Sami postule dans une entreprise et se demande si elle a une obligation d'embaucher des personnes en situation de handicap. À partir de combien de salariés une entreprise privée doit-elle employer au moins 6 % de travailleurs en situation de handicap ?",
         options:["10 salariés","20 salariés","50 salariés"], correct:1,
-        explication:"L'obligation d'emploi (OETH) s'applique aux entreprises de 20 salariés et plus.",
-        droit:"Cette obligation légale crée de vraies opportunités : beaucoup d'entreprises recrutent activement des personnes RQTH pour y répondre." },
+        explication:"L'obligation d'emploi (OETH) s'applique aux entreprises de 20 salariés et plus. Les cotisations des entreprises qui n'atteignent pas ce quota financent des aides : via l'Agefiph dans le secteur privé, et via le FIPHFP dans la fonction publique.",
+        droit:"Cette obligation légale crée de vraies opportunités : beaucoup d'entreprises et d'administrations recrutent activement des personnes RQTH pour y répondre." },
       { format:"debat", question:"\"Si je mentionne ma RQTH en entretien, je n'aurai jamais le poste.\" Comment déconstruire cette peur en équipe ?",
         prompt:"Discutez : à quel moment, selon vous, est-il le plus stratégique de mentionner sa RQTH dans un processus de recrutement ?",
         explication:"Rien n'oblige à le dire en entretien. Beaucoup de candidat·es choisissent de l'évoquer après l'embauche, au moment de demander un aménagement concret.",
@@ -957,8 +984,8 @@ const stations = [
     questions:[
       { format:"qcm", question:"Inès est en alternance et vient d'obtenir la RQTH. Son poste peut-il être adapté ? Et qui pourrait financer ça ?",
         options:["Non, l'alternance exclut ce type d'aide","Oui, des aides existent pour adapter le poste, les horaires ou le matériel en alternance"], correct:1,
-        explication:"Des dispositifs (notamment via l'Agefiph) financent l'adaptation des postes en apprentissage ou en alternance.",
-        droit:"Ne renonce jamais à une offre d'alternance par peur du coût d'un aménagement : des aides existent justement pour ça, à la charge de l'employeur ou de l'Agefiph." },
+        explication:"Des dispositifs financent l'adaptation des postes en apprentissage ou en alternance : l'Agefiph pour une entreprise privée, le FIPHFP pour un employeur public.",
+        droit:"Ne renonce jamais à une offre d'alternance par peur du coût d'un aménagement : des aides existent justement pour ça, à la charge de l'employeur, de l'Agefiph (secteur privé) ou du FIPHFP (secteur public)." },
       { format:"situation", question:"Manon postule en stage et se demande si elle doit signaler son handicap moteur dès sa lettre de motivation. À ton avis, quelle est la meilleure pratique ?",
         options:["Le signaler systématiquement dès la candidature, sans exception","Choisir librement le moment, souvent au moment où l'aménagement devient concrètement utile (ex: avant la visite des locaux)"], correct:1,
         explication:"Il n'existe pas d'obligation ni de moment unique idéal : le bon moment dépend du besoin réel d'aménagement.",
@@ -1733,7 +1760,7 @@ function resetTimer(){
 
 /* ===================== INIT ===================== */
 loadPrefs();
-initFromQuery();
+cleanStartUrl();
 updateBackButton();
 render(false);
 initialised = true;
