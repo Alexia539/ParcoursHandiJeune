@@ -53,6 +53,20 @@
   --warn:#B45309;
   --focus-ring:#1450C4;
 
+  /* couleurs dédiées aux encadrés de retour (bonne/mauvaise réponse, info) :
+     fonds clairs et unis + couleur d'encre bien plus sombre que le fond,
+     pour un contraste fort. Le vert et l'orange sont volontairement choisis
+     dans des familles de teintes différentes (bleu-vert vs orange-ambré)
+     afin de rester distinguables en cas de daltonisme (deutéranopie/
+     protanopie) ; chaque état porte aussi une icône et un style de bordure
+     différents, pour ne jamais dépendre de la couleur seule. */
+  --fb-good-bg:#E1F3E8;
+  --fb-good-ink:#0F6B3F;
+  --fb-warn-bg:#FCEAD4;
+  --fb-warn-ink:#8A4B05;
+  --fb-info-bg:#EAE3FA;
+  --fb-info-ink:#3F2A78;
+
   --font-display:'Fredoka','Nunito',sans-serif;
   --font-body:'Nunito','Segoe UI',sans-serif;
   --fs-scale:1;
@@ -82,6 +96,13 @@ html[data-theme="dark"]{
   --stamp:#5FE0C8;
   --warn:#FFB86B;
   --focus-ring:#9DC0FF;
+
+  --fb-good-bg:#163A2A;
+  --fb-good-ink:#7CEAB4;
+  --fb-warn-bg:#3B2710;
+  --fb-warn-ink:#FFCB8E;
+  --fb-info-bg:#2A2152;
+  --fb-info-ink:#DCCEFF;
 }
 
 html[data-font="verdana"]{ --font-body: Verdana, Geneva, sans-serif; --font-display: Verdana, Geneva, sans-serif; }
@@ -317,17 +338,17 @@ main{ flex:1; max-width:760px; width:100%; margin:0 auto; padding:1.1rem 1rem 3r
 }
 .opt-btn:hover{ border-color:var(--accent-teal); transform: translateX(3px) scale(1.01); }
 .opt-btn:active{ transform: scale(0.98); }
-.opt-btn.correct{ background:var(--stamp); color:var(--text-on-accent); border-color:var(--stamp); animation: bounce 0.4s ease; }
-.opt-btn.wrong{ background:color-mix(in srgb, var(--warn) 16%, var(--surface-card)); color:var(--text-primary); border:3px dashed var(--warn); animation: shake 0.35s ease; }
+.opt-btn.correct{ background:var(--accent-teal-strong); color:var(--text-on-accent); border-color:var(--accent-teal-strong); animation: bounce 0.4s ease; }
+.opt-btn.wrong{ background:var(--fb-warn-bg); color:var(--text-primary); border:3px dashed var(--fb-warn-ink); animation: shake 0.35s ease; }
 .opt-mark{ display:inline-flex; vertical-align:middle; margin-right:0.5rem; }
 .opt-mark .ico-svg{ width:1.25em; height:1.25em; }
-.opt-btn.wrong .opt-mark{ color:var(--warn); }
+.opt-btn.wrong .opt-mark{ color:var(--fb-warn-ink); }
 .sr-only{ position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 .fb-title{ display:flex; align-items:center; gap:0.5rem; font-family:var(--font-display); font-weight:700; font-size:1.05em; margin-bottom:0.5rem; }
 .fb-title .ico-svg{ width:1.4em; height:1.4em; }
-.feedback.good .fb-title .ico-svg{ color:var(--stamp); }
-.feedback.bad .fb-title .ico-svg{ color:var(--warn); }
-.feedback.neutral .fb-title .ico-svg{ color:var(--accent-violet); }
+.feedback.good .fb-title .ico-svg{ color:var(--fb-good-ink); }
+.feedback.bad .fb-title .ico-svg{ color:var(--fb-warn-ink); }
+.feedback.neutral .fb-title .ico-svg{ color:var(--fb-info-ink); }
 .feedback:focus-visible{ outline:3px solid var(--focus-ring); outline-offset:3px; }
 .opt-btn:disabled{ cursor:default; }
 @keyframes bounce{ 0%{transform:scale(1);} 40%{transform:scale(1.04);} 100%{transform:scale(1);} }
@@ -352,9 +373,9 @@ main{ flex:1; max-width:760px; width:100%; margin:0 auto; padding:1.1rem 1rem 3r
   font-weight:600;
 }
 .feedback.show{ display:block; animation:rise 0.35s ease; }
-.feedback.good{ background: color-mix(in srgb, var(--stamp) 16%, var(--surface-muted)); border-left:5px solid var(--stamp); }
-.feedback.bad{ background: color-mix(in srgb, var(--warn) 14%, var(--surface-muted)); border-left:5px dashed var(--warn); }
-.feedback.neutral{ background: color-mix(in srgb, var(--accent-violet) 14%, var(--surface-muted)); border-left:5px solid var(--accent-violet); }
+.feedback.good{ background: var(--fb-good-bg); border-left:5px solid var(--fb-good-ink); }
+.feedback.bad{ background: var(--fb-warn-bg); border-left:5px dashed var(--fb-warn-ink); }
+.feedback.neutral{ background: var(--fb-info-bg); border-left:5px solid var(--fb-info-ink); }
 @keyframes rise{ from{opacity:0; transform:translateY(6px);} to{opacity:1; transform:translateY(0);} }
 @media (prefers-reduced-motion: reduce){
   *, *::before, *::after{ animation:none !important; transition:none !important; scroll-behavior:auto !important; }
@@ -949,8 +970,8 @@ const stations = [
     questions:[
       { format:"qcm", question:"Sami postule dans une entreprise et se demande si elle a une obligation d'embaucher des personnes en situation de handicap. À partir de combien de salariés une entreprise privée doit-elle employer au moins 6 % de travailleurs en situation de handicap ?",
         options:["10 salariés","20 salariés","50 salariés"], correct:1,
-        explication:"L'obligation d'emploi (OETH) s'applique aux entreprises de 20 salariés et plus.",
-        droit:"Cette obligation légale crée de vraies opportunités : beaucoup d'entreprises recrutent activement des personnes RQTH pour y répondre." },
+        explication:"L'obligation d'emploi (OETH) s'applique aux entreprises de 20 salariés et plus. Les cotisations des entreprises qui n'atteignent pas ce quota financent des aides : via l'Agefiph dans le secteur privé, et via le FIPHFP dans la fonction publique.",
+        droit:"Cette obligation légale crée de vraies opportunités : beaucoup d'entreprises et d'administrations recrutent activement des personnes RQTH pour y répondre." },
       { format:"debat", question:"\"Si je mentionne ma RQTH en entretien, je n'aurai jamais le poste.\" Comment déconstruire cette peur en équipe ?",
         prompt:"Discutez : à quel moment, selon vous, est-il le plus stratégique de mentionner sa RQTH dans un processus de recrutement ?",
         explication:"Rien n'oblige à le dire en entretien. Beaucoup de candidat·es choisissent de l'évoquer après l'embauche, au moment de demander un aménagement concret.",
@@ -963,8 +984,8 @@ const stations = [
     questions:[
       { format:"qcm", question:"Inès est en alternance et vient d'obtenir la RQTH. Son poste peut-il être adapté ? Et qui pourrait financer ça ?",
         options:["Non, l'alternance exclut ce type d'aide","Oui, des aides existent pour adapter le poste, les horaires ou le matériel en alternance"], correct:1,
-        explication:"Des dispositifs (notamment via l'Agefiph) financent l'adaptation des postes en apprentissage ou en alternance.",
-        droit:"Ne renonce jamais à une offre d'alternance par peur du coût d'un aménagement : des aides existent justement pour ça, à la charge de l'employeur ou de l'Agefiph." },
+        explication:"Des dispositifs financent l'adaptation des postes en apprentissage ou en alternance : l'Agefiph pour une entreprise privée, le FIPHFP pour un employeur public.",
+        droit:"Ne renonce jamais à une offre d'alternance par peur du coût d'un aménagement : des aides existent justement pour ça, à la charge de l'employeur, de l'Agefiph (secteur privé) ou du FIPHFP (secteur public)." },
       { format:"situation", question:"Manon postule en stage et se demande si elle doit signaler son handicap moteur dès sa lettre de motivation. À ton avis, quelle est la meilleure pratique ?",
         options:["Le signaler systématiquement dès la candidature, sans exception","Choisir librement le moment, souvent au moment où l'aménagement devient concrètement utile (ex: avant la visite des locaux)"], correct:1,
         explication:"Il n'existe pas d'obligation ni de moment unique idéal : le bon moment dépend du besoin réel d'aménagement.",
